@@ -436,7 +436,7 @@ function renderCommunities(){
             <div class="card-units">${c.units.length?c.units.map(u=>`
               <div class="unit-row"><span class="unit-type">${u.type}</span><span class="unit-price">$${u.price.toLocaleString()}/mo</span><span class="unit-avail">${u.available} avail.</span></div>`).join('')
               :'<div class="empty-units">No pricing added — click to edit</div>'}</div>
-            <div class="card-footer"><span class="amenities">${c.amenities}</span><a href="${c.url}" target="_blank" onclick="event.stopPropagation()">Visit site &rarr;</a></div>
+            <div class="card-footer"><span class="amenities">${c.amenities}</span>${c.commission?`<span style="font-size:11px;color:var(--accent-dark);font-weight:500">${c.commission==='1month'?'Commission: 1 Month':'Commission: $'+c.commission.split(':')[1]}</span>`:''}<a href="${c.url}" target="_blank" onclick="event.stopPropagation()">Visit site &rarr;</a></div>
           </div>`).join('')}
       </div>
     </div>`).join('');
@@ -506,7 +506,10 @@ function updateThumb(input){
   const thumb=input.closest('.img-url-row').querySelector('.img-thumb');
   thumb.src=input.value;thumb.style.opacity=1;
 }
-
+function toggleCommissionInput(){
+  const type=document.getElementById('ep-commission-type').value;
+  document.getElementById('ep-commission-flat-group').style.display=type==='flat'?'block':'none';
+}
 function addImgRow(){
   const editor=document.getElementById('img-editor');
   const i=editor.children.length;
@@ -529,8 +532,12 @@ function removeUnitRow(btn){btn.closest('.unit-edit-row').remove()}
 
 function saveEditPanel(){
   const c=communities.find(x=>x.id===editingId);
-  c.active=document.getElementById('ep-active').value==='true';
+  c.active=document.getElementById('ep-active').value==='true';const commParts=(c.commission||'').split(':');
+document.getElementById('ep-commission-type').value=commParts[0]||'';
+if(commParts[0]==='flat'){document.getElementById('ep-commission-flat-group').style.display='block';document.getElementById('ep-commission-flat').value=commParts[1]||'';}
   c.amenities=document.getElementById('ep-amenities').value;
+  const commType=document.getElementById('ep-commission-type').value;
+c.commission=commType==='flat'?'flat:'+document.getElementById('ep-commission-flat').value:commType;
   // Save images
   c.images=[];
   document.querySelectorAll('#img-editor .img-url-row input').forEach(inp=>{if(inp.value.trim())c.images.push(inp.value.trim())});
