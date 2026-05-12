@@ -454,6 +454,17 @@ function openEditPanel(id){
         <option value="false" ${!c.active?'selected':''}>Hidden</option>
       </select>
     </div>
+    <div class="form-group"><label class="form-label">Commission</label>
+  <select class="form-select" id="ep-commission-type" onchange="toggleCommissionInput()">
+    <option value="">Not set</option>
+    <option value="1month">1 Month's Rent</option>
+    <option value="flat">Flat Fee ($)</option>
+  </select>
+</div>
+<div class="form-group" id="ep-commission-flat-group" style="display:none">
+  <label class="form-label">Flat Fee Amount</label>
+  <input class="form-input" id="ep-commission-flat" placeholder="e.g. 1500">
+</div>
     <div class="form-group"><label class="form-label">Amenities</label><input class="form-input" id="ep-amenities" value="${c.amenities}"></div>
     <hr class="divider">
     <div class="form-group">
