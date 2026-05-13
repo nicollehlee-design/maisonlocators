@@ -88,7 +88,6 @@ body{font-family:var(--sans);background:var(--cream);color:var(--dark);min-heigh
 .form-input,.form-select{width:100%;padding:9px 12px;border:1px solid var(--border);font-family:var(--sans);font-size:13px;font-weight:300;color:var(--dark);background:var(--white);outline:none}
 .form-input:focus,.form-select:focus{border-color:var(--accent)}
 .form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.img-editor{margin-top:4px}
 .img-url-row{display:flex;gap:8px;margin-bottom:8px;align-items:center}
 .img-url-row input{flex:1;padding:8px 10px;border:1px solid var(--border);font-family:var(--sans);font-size:12px;font-weight:300;color:var(--dark);background:var(--white);outline:none}
 .img-url-row input:focus{border-color:var(--accent)}
@@ -182,16 +181,16 @@ body{font-family:var(--sans);background:var(--cream);color:var(--dark);min-heigh
     </div>
     <div class="sidebar-section">
       <div class="sidebar-label">Navigation</div>
-      <div class="sidebar-nav-item active" onclick="showView('dashboard')">Dashboard</div>
+      <div class="sidebar-nav-item" onclick="showView('dashboard')">Dashboard</div>
       <div class="sidebar-nav-item" onclick="showView('communities')">Communities</div>
       <div class="sidebar-nav-item" onclick="showView('clients')">Client Links</div>
-      <div class="sidebar-nav-item" onclick="showView('preview')">Client Preview</div>
+      <div class="sidebar-nav-item active" onclick="showView('preview')">Client Preview</div>
     </div>
     <div class="sidebar-bottom"><p>Maison Locators &copy; 2025<br>Miami, FL<br>Agent use only</p></div>
   </aside>
 
   <main class="main">
-    <div id="view-dashboard" class="view active">
+    <div id="view-dashboard" class="view">
       <div class="topbar">
         <span class="topbar-title">Dashboard</span>
         <div class="topbar-actions">
@@ -262,7 +261,7 @@ body{font-family:var(--sans);background:var(--cream);color:var(--dark);min-heigh
       </div>
     </div>
 
-    <div id="view-preview" class="view" style="padding:0">
+    <div id="view-preview" class="view active" style="padding:0">
       <div class="topbar">
         <span class="topbar-title">Client Preview</span>
         <div class="topbar-actions">
@@ -302,33 +301,48 @@ body{font-family:var(--sans);background:var(--cream);color:var(--dark);min-heigh
 
 <script>
 // ─── SUPABASE CONFIG ───────────────────────────────────────────────
-const SUPABASE_URL = 'https://wqsafypwedcqepummdse.supabase.co';
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Indxc2FmeXB3ZWRjcWVwdW1tZHNlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg2Mjk5OTAsImV4cCI6MjA5NDIwNTk5MH0.KONOE81AWpYw5-R9y6dOzIukf3dzx-xs5dlsjGrryvU';
-const HEADERS = {'Content-Type':'application/json','apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY};
+const SUPABASE_URL='https://wqsafypwedcqepummdse.supabase.co';
+const SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Indxc2FmeXB3ZWRjcWVwdW1tZHNlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg2Mjk5OTAsImV4cCI6MjA5NDIwNTk5MH0.KONOE81AWpYw5-R9y6dOzIukf3dzx-xs5dlsjGrryvU';
+const HEADERS={'Content-Type':'application/json','apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY};
 
-async function sbGet(table){
-  const r=await fetch(`${SUPABASE_URL}/rest/v1/${table}?select=*`,{headers:HEADERS});
-  return r.json();
-}
-async function sbUpsert(table,data){
-  setSyncing(true);
-  const r=await fetch(`${SUPABASE_URL}/rest/v1/${table}`,{method:'POST',headers:{...HEADERS,'Prefer':'resolution=merge-duplicates'},body:JSON.stringify(data)});
-  setSyncing(false);
-  return r;
-}
-async function sbDelete(table,id){
-  setSyncing(true);
-  const r=await fetch(`${SUPABASE_URL}/rest/v1/${table}?id=eq.${id}`,{method:'DELETE',headers:HEADERS});
-  setSyncing(false);
-  return r;
-}
+async function sbGet(table){const r=await fetch(`${SUPABASE_URL}/rest/v1/${table}?select=*`,{headers:HEADERS});return r.json()}
+async function sbUpsert(table,data){setSyncing(true);const r=await fetch(`${SUPABASE_URL}/rest/v1/${table}`,{method:'POST',headers:{...HEADERS,'Prefer':'resolution=merge-duplicates'},body:JSON.stringify(data)});setSyncing(false);return r}
+async function sbDelete(table,id){setSyncing(true);const r=await fetch(`${SUPABASE_URL}/rest/v1/${table}?id=eq.${id}`,{method:'DELETE',headers:HEADERS});setSyncing(false);return r}
 
 function setSyncing(on){
-  const dot=document.getElementById('sync-dot');
-  const lbl=document.getElementById('sync-label');
-  if(!dot)return;
+  const dot=document.getElementById('sync-dot');const lbl=document.getElementById('sync-label');if(!dot)return;
   if(on){dot.className='sync-dot syncing';lbl.textContent='Saving...';}
   else{dot.className='sync-dot';lbl.textContent='Synced';}
+}
+
+// ─── PASSWORD ─────────────────────────────────────────────────────
+const AGENT_PASSWORD='maison2025';
+let pendingView=null;
+
+// Build password gate overlay (hidden by default)
+const gate=document.createElement('div');
+gate.id='password-gate';
+gate.style.cssText='display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:200;align-items:center;justify-content:center';
+gate.innerHTML=`
+  <div style="background:var(--white);padding:36px;width:320px">
+    <p style="font-family:var(--serif);font-size:20px;margin-bottom:16px;color:var(--dark)">Agent Access</p>
+    <input id="pw-input" type="password" placeholder="Enter password" style="width:100%;padding:10px 12px;border:1px solid var(--border);font-family:var(--sans);font-size:13px;outline:none;margin-bottom:10px" onkeydown="if(event.key==='Enter')submitPw()">
+    <p id="pw-error" style="color:var(--red);font-size:11px;margin-bottom:10px;display:none">Incorrect password</p>
+    <button onclick="submitPw()" style="width:100%;padding:10px;background:var(--black);color:var(--white);border:none;font-family:var(--sans);font-size:11px;letter-spacing:0.12em;text-transform:uppercase;cursor:pointer">Enter</button>
+  </div>`;
+document.body.appendChild(gate);
+
+function submitPw(){
+  const val=document.getElementById('pw-input').value;
+  if(val===AGENT_PASSWORD){
+    sessionStorage.setItem('ml_authed','1');
+    gate.style.display='none';
+    document.getElementById('pw-input').value='';
+    document.getElementById('pw-error').style.display='none';
+    if(pendingView){const v=pendingView;pendingView=null;showView(v);}
+  } else {
+    document.getElementById('pw-error').style.display='block';
+  }
 }
 
 // ─── DEFAULT COMMUNITIES ──────────────────────────────────────────
@@ -379,7 +393,6 @@ let clients=[];
 let editingId=null;
 
 function getNeighborhoods(){return[...new Set(communities.map(c=>c.neighborhood))].sort()}
-
 function commissionLabel(val){
   if(!val)return'';
   if(val==='1month')return'Commission: 1 Month';
@@ -391,37 +404,22 @@ function commissionLabel(val){
 async function init(){
   document.getElementById('communities-by-hood').innerHTML='<div class="loading"><div class="spinner"></div>Loading from database...</div>';
   let dbComms=await sbGet('communities');
-  if(!Array.isArray(dbComms)||dbComms.length===0){
-    // Seed database with defaults
-    await sbUpsert('communities',DEFAULT_COMMUNITIES);
-    dbComms=DEFAULT_COMMUNITIES;
-  }
+  if(!Array.isArray(dbComms)||dbComms.length===0){await sbUpsert('communities',DEFAULT_COMMUNITIES);dbComms=DEFAULT_COMMUNITIES;}
   communities=dbComms;
   let dbClients=await sbGet('clients');
   clients=Array.isArray(dbClients)?dbClients:[];
-  renderDashboard();
-  renderCommunities();
-  renderClients();
-  renderClientView();
+  renderDashboard();renderCommunities();renderClients();renderClientView();
 }
 
+// ─── NAVIGATION ───────────────────────────────────────────────────
 function showView(name){
-  const protectedViews = ['dashboard', 'communities'];
-  if (protectedViews.includes(name) && !sessionStorage.getItem('ml_authed')) {
-    pendingView = name;
-    document.getElementById('password-gate').style.display = 'flex';
+  const protected_=['dashboard','communities'];
+  if(protected_.includes(name)&&!sessionStorage.getItem('ml_authed')){
+    pendingView=name;
+    gate.style.display='flex';
+    setTimeout(()=>document.getElementById('pw-input').focus(),100);
     return;
   }
-  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
-  document.querySelectorAll('.sidebar-nav-item').forEach(n=>n.classList.remove('active'));
-  document.getElementById('view-'+name).classList.add('active');
-  const map={dashboard:'Dashboard',communities:'Communities',clients:'Client Links',preview:'Client Preview'};
-  document.querySelectorAll('.sidebar-nav-item').forEach(n=>{if(n.textContent.trim()===map[name])n.classList.add('active')});
-  if(name==='dashboard')renderDashboard();
-  if(name==='communities')renderCommunities();
-  if(name==='clients')renderClients();
-  if(name==='preview')renderClientView();
-}
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
   document.querySelectorAll('.sidebar-nav-item').forEach(n=>n.classList.remove('active'));
   document.getElementById('view-'+name).classList.add('active');
@@ -447,10 +445,8 @@ function renderDashboard(){
     <table class="client-table"><thead><tr><th>Community</th><th>Neighborhood</th><th>Floor Plans</th><th>Available</th><th>Commission</th><th>Photos</th></tr></thead>
     <tbody>${recent.map(c=>`<tr>
       <td>${c.name}</td><td><span class="badge badge-gold">${c.neighborhood}</span></td>
-      <td>${(c.units||[]).length}</td>
-      <td>${(c.units||[]).reduce((a,u)=>a+(u.available||0),0)}</td>
-      <td>${c.commission?commissionLabel(c.commission):'—'}</td>
-      <td>${(c.images||[]).length}</td>
+      <td>${(c.units||[]).length}</td><td>${(c.units||[]).reduce((a,u)=>a+(u.available||0),0)}</td>
+      <td>${c.commission?commissionLabel(c.commission):'—'}</td><td>${(c.images||[]).length}</td>
     </tr>`).join('')}</tbody></table>`
     :`<div class="no-results">No pricing added yet. Visit Communities to get started.</div>`;
 }
@@ -461,14 +457,10 @@ function renderCommunities(){
   const hoodSel=document.getElementById('hood-filter');const cur=hoodSel.value;
   hoodSel.innerHTML='<option value="">All neighborhoods</option>'+getNeighborhoods().map(h=>`<option value="${h}" ${h===cur?'selected':''}>${h}</option>`).join('');
   const filtered=communities.filter(c=>(!search||c.name.toLowerCase().includes(search)||c.neighborhood.toLowerCase().includes(search))&&(!hoodFilter||c.neighborhood===hoodFilter));
-  const byHood={};
-  filtered.forEach(c=>{if(!byHood[c.neighborhood])byHood[c.neighborhood]=[];byHood[c.neighborhood].push(c)});
+  const byHood={};filtered.forEach(c=>{if(!byHood[c.neighborhood])byHood[c.neighborhood]=[];byHood[c.neighborhood].push(c)});
   document.getElementById('communities-by-hood').innerHTML=Object.keys(byHood).sort().map(hood=>`
     <div class="hood-section">
-      <div class="hood-section-header">
-        <div class="hood-section-title">${hood}</div>
-        <div class="hood-count">${byHood[hood].length} ${byHood[hood].length===1?'community':'communities'}</div>
-      </div>
+      <div class="hood-section-header"><div class="hood-section-title">${hood}</div><div class="hood-count">${byHood[hood].length} ${byHood[hood].length===1?'community':'communities'}</div></div>
       <div class="community-grid">
         ${byHood[hood].map(c=>`
           <div class="community-card" onclick="openEditPanel(${c.id})">
@@ -494,10 +486,8 @@ function renderCommunities(){
 }
 
 function openEditPanel(id){
-  editingId=id;
-  const c=communities.find(x=>x.id===id);
-  const imgs=c.images||[];
-  const commParts=(c.commission||'').split(':');
+  editingId=id;const c=communities.find(x=>x.id===id);
+  const imgs=c.images||[];const commParts=(c.commission||'').split(':');
   document.getElementById('edit-panel-title').textContent=c.name;
   document.getElementById('edit-panel-body').innerHTML=`
     <div class="form-group"><label class="form-label">Status</label>
@@ -507,8 +497,7 @@ function openEditPanel(id){
       </select>
     </div>
     <div class="form-group"><label class="form-label">Amenities</label><input class="form-input" id="ep-amenities" value="${c.amenities||''}"></div>
-    <div class="form-group">
-      <label class="form-label">Commission</label>
+    <div class="form-group"><label class="form-label">Commission</label>
       <select class="form-select" id="ep-commission-type" onchange="toggleCommissionInput()">
         <option value="" ${!commParts[0]?'selected':''}>Not set</option>
         <option value="1month" ${commParts[0]==='1month'?'selected':''}>1 Month's Rent</option>
@@ -545,29 +534,11 @@ function openEditPanel(id){
   document.getElementById('overlay').classList.add('open');
 }
 
-function toggleCommissionInput(){
-  const type=document.getElementById('ep-commission-type').value;
-  document.getElementById('ep-commission-flat-group').style.display=type==='flat'?'block':'none';
-}
-
-function imgRow(url,i){return`<div class="img-url-row" id="img-row-${i}">
-  <img class="img-thumb" src="${url}" onerror="this.style.opacity=0.2" alt="">
-  <input type="text" value="${url}" placeholder="https://..." oninput="updateThumb(this)">
-  <button class="remove-img" onclick="this.closest('.img-url-row').remove()">&times;</button>
-</div>`}
-
+function toggleCommissionInput(){const type=document.getElementById('ep-commission-type').value;document.getElementById('ep-commission-flat-group').style.display=type==='flat'?'block':'none'}
+function imgRow(url,i){return`<div class="img-url-row" id="img-row-${i}"><img class="img-thumb" src="${url}" onerror="this.style.opacity=0.2" alt=""><input type="text" value="${url}" placeholder="https://..." oninput="updateThumb(this)"><button class="remove-img" onclick="this.closest('.img-url-row').remove()">&times;</button></div>`}
 function updateThumb(input){const t=input.closest('.img-url-row').querySelector('.img-thumb');t.src=input.value;t.style.opacity=1}
 function addImgRow(){const e=document.getElementById('img-editor');const d=document.createElement('div');d.innerHTML=imgRow('',e.children.length);e.appendChild(d.firstElementChild)}
-
-function unitRow(u,i){return`<div class="unit-edit-row" id="unit-row-${i}">
-  <select style="padding:8px 6px;border:1px solid var(--border);font-size:12px;font-family:var(--sans);font-weight:300;outline:none">
-    ${['Studio','1 Bed','2 Bed','3 Bed','1 Bed + Den','2 Bed + Den'].map(t=>`<option ${u.type===t?'selected':''}>${t}</option>`).join('')}
-  </select>
-  <input type="number" value="${u.price}" placeholder="e.g. 2800">
-  <input type="number" value="${u.available}" placeholder="# units">
-  <button onclick="removeUnitRow(this)" style="background:none;border:none;color:var(--red);cursor:pointer;font-size:20px;line-height:1;padding:0 4px">&times;</button>
-</div>`}
-
+function unitRow(u,i){return`<div class="unit-edit-row" id="unit-row-${i}"><select style="padding:8px 6px;border:1px solid var(--border);font-size:12px;font-family:var(--sans);font-weight:300;outline:none">${['Studio','1 Bed','2 Bed','3 Bed','1 Bed + Den','2 Bed + Den'].map(t=>`<option ${u.type===t?'selected':''}>${t}</option>`).join('')}</select><input type="number" value="${u.price}" placeholder="e.g. 2800"><input type="number" value="${u.available}" placeholder="# units"><button onclick="removeUnitRow(this)" style="background:none;border:none;color:var(--red);cursor:pointer;font-size:20px;line-height:1;padding:0 4px">&times;</button></div>`}
 function addUnitRow(){const e=document.getElementById('units-editor');const d=document.createElement('div');d.innerHTML=unitRow({type:'1 Bed',price:'',available:''},e.children.length);e.appendChild(d.firstElementChild)}
 function removeUnitRow(btn){btn.closest('.unit-edit-row').remove()}
 
@@ -577,49 +548,21 @@ async function saveEditPanel(){
   c.amenities=document.getElementById('ep-amenities').value;
   const commType=document.getElementById('ep-commission-type').value;
   c.commission=commType==='flat'?'flat:'+document.getElementById('ep-commission-flat').value:commType;
-  c.images=[];
-  document.querySelectorAll('#img-editor .img-url-row input').forEach(inp=>{if(inp.value.trim())c.images.push(inp.value.trim())});
-  c.units=[];
-  document.querySelectorAll('#units-editor .unit-edit-row').forEach(row=>{
-    const sel=row.querySelector('select');const inputs=row.querySelectorAll('input');
-    if(inputs[0].value)c.units.push({type:sel.value,price:parseInt(inputs[0].value)||0,available:parseInt(inputs[1].value)||0});
-  });
-  await sbUpsert('communities',c);
-  closeEditPanel();renderCommunities();renderDashboard();
+  c.images=[];document.querySelectorAll('#img-editor .img-url-row input').forEach(inp=>{if(inp.value.trim())c.images.push(inp.value.trim())});
+  c.units=[];document.querySelectorAll('#units-editor .unit-edit-row').forEach(row=>{const sel=row.querySelector('select');const inputs=row.querySelectorAll('input');if(inputs[0].value)c.units.push({type:sel.value,price:parseInt(inputs[0].value)||0,available:parseInt(inputs[1].value)||0})});
+  await sbUpsert('communities',c);closeEditPanel();renderCommunities();renderDashboard();
 }
 
 function closeEditPanel(){document.getElementById('edit-panel').classList.remove('open');document.getElementById('overlay').classList.remove('open');editingId=null}
 
-// SLIDER
 const sliderIdx={};
 function makeSlider(images,neighborhood,cardId){
   const imgs=images&&images.length>0?images:[];
-  return`<div class="slider-wrap" id="slider-${cardId}">
-    <div class="neighborhood-tag">${neighborhood}</div>
-    <div class="slider-track" id="track-${cardId}">
-      ${imgs.length>0?imgs.map(url=>`<div class="slide"><img src="${url}" alt="" onerror="this.parentElement.innerHTML='<div class=slide-placeholder>M</div>'"></div>`).join('')
-        :'<div class="slide"><div class="slide-placeholder">M</div></div>'}
-    </div>
-    ${imgs.length>1?`
-      <button class="slider-btn slider-prev" onclick="slideMove('${cardId}',-1,${imgs.length});event.stopPropagation()">&#8249;</button>
-      <button class="slider-btn slider-next" onclick="slideMove('${cardId}',1,${imgs.length});event.stopPropagation()">&#8250;</button>
-      <div class="slider-dots" id="dots-${cardId}">${imgs.map((_,i)=>`<div class="slider-dot ${i===0?'active':''}" onclick="slideTo('${cardId}',${i},${imgs.length});event.stopPropagation()"></div>`).join('')}</div>
-      <div class="slider-img-count" id="count-${cardId}">1 / ${imgs.length}</div>`:''}
-    <button class="fav-btn" id="fav-${cardId}" onclick="toggleFav('${cardId}',this);event.stopPropagation()">&#9825;</button>
-  </div>`;
+  return`<div class="slider-wrap" id="slider-${cardId}"><div class="neighborhood-tag">${neighborhood}</div><div class="slider-track" id="track-${cardId}">${imgs.length>0?imgs.map(url=>`<div class="slide"><img src="${url}" alt="" onerror="this.parentElement.innerHTML='<div class=slide-placeholder>M</div>'"></div>`).join(''):'<div class="slide"><div class="slide-placeholder">M</div></div>'}</div>${imgs.length>1?`<button class="slider-btn slider-prev" onclick="slideMove('${cardId}',-1,${imgs.length});event.stopPropagation()">&#8249;</button><button class="slider-btn slider-next" onclick="slideMove('${cardId}',1,${imgs.length});event.stopPropagation()">&#8250;</button><div class="slider-dots" id="dots-${cardId}">${imgs.map((_,i)=>`<div class="slider-dot ${i===0?'active':''}" onclick="slideTo('${cardId}',${i},${imgs.length});event.stopPropagation()"></div>`).join('')}</div><div class="slider-img-count" id="count-${cardId}">1 / ${imgs.length}</div>`:''}<button class="fav-btn" id="fav-${cardId}" onclick="toggleFav('${cardId}',this);event.stopPropagation()">&#9825;</button></div>`;
 }
 function slideMove(id,dir,total){sliderIdx[id]=((sliderIdx[id]||0)+dir+total)%total;slideTo(id,sliderIdx[id],total)}
-function slideTo(id,idx,total){
-  sliderIdx[id]=idx;
-  const t=document.getElementById('track-'+id);if(t)t.style.transform=`translateX(-${idx*100}%)`;
-  const d=document.getElementById('dots-'+id);if(d)[...d.children].forEach((x,i)=>x.classList.toggle('active',i===idx));
-  const c=document.getElementById('count-'+id);if(c)c.textContent=`${idx+1} / ${total}`;
-}
-function toggleFav(id,btn){
-  const card=btn.closest('.listing-card');card.classList.toggle('favorited');
-  btn.innerHTML=card.classList.contains('favorited')?'&#9829;':'&#9825;';
-  btn.style.color=card.classList.contains('favorited')?'var(--accent-dark)':'';
-}
+function slideTo(id,idx,total){sliderIdx[id]=idx;const t=document.getElementById('track-'+id);if(t)t.style.transform=`translateX(-${idx*100}%)`;const d=document.getElementById('dots-'+id);if(d)[...d.children].forEach((x,i)=>x.classList.toggle('active',i===idx));const c=document.getElementById('count-'+id);if(c)c.textContent=`${idx+1} / ${total}`}
+function toggleFav(id,btn){const card=btn.closest('.listing-card');card.classList.toggle('favorited');btn.innerHTML=card.classList.contains('favorited')?'&#9829;':'&#9825;';btn.style.color=card.classList.contains('favorited')?'var(--accent-dark)':''}
 
 function renderClientView(){
   const typeF=document.getElementById('client-type-filter').value;
@@ -632,36 +575,17 @@ function renderClientView(){
   let selectedHoods=hoods;
   if(clientIdx!==''){const cl=clients[parseInt(clientIdx)];if(cl)selectedHoods=cl.neighborhoods}
   let listings=[];
-  communities.filter(c=>c.active&&selectedHoods.includes(c.neighborhood)).forEach(c=>{
-    (c.units||[]).forEach(u=>listings.push({cid:c.id,neighborhood:c.neighborhood,amenities:c.amenities,images:c.images||[],...u}));
-  });
+  communities.filter(c=>c.active&&selectedHoods.includes(c.neighborhood)).forEach(c=>{(c.units||[]).forEach(u=>listings.push({cid:c.id,neighborhood:c.neighborhood,amenities:c.amenities,images:c.images||[],...u}))});
   if(typeF)listings=listings.filter(l=>l.type===typeF);
   if(hoodF)listings=listings.filter(l=>l.neighborhood===hoodF);
   if(priceF){const[min,max]=priceF.split('-').map(Number);listings=listings.filter(l=>l.price>=min&&l.price<=max)}
   const content=document.getElementById('client-content');
   if(!listings.length){content.innerHTML='<div class="no-results">No listings match your current filters.</div>';return}
-  const byHood={};
-  listings.forEach(l=>{if(!byHood[l.neighborhood])byHood[l.neighborhood]=[];byHood[l.neighborhood].push(l)});
+  const byHood={};listings.forEach(l=>{if(!byHood[l.neighborhood])byHood[l.neighborhood]=[];byHood[l.neighborhood].push(l)});
   content.innerHTML=Object.keys(byHood).sort().map(hood=>`
     <div class="client-hood-section">
-      <div class="client-hood-header">
-        <div class="client-hood-title">${hood}</div>
-        <div class="client-hood-count">${byHood[hood].length} listing${byHood[hood].length!==1?'s':''}</div>
-      </div>
-      <div class="client-grid">
-        ${byHood[hood].map((l,i)=>{
-          const cardId=`${l.cid}-${l.type.replace(/\s/g,'')}-${i}`;
-          return`<div class="listing-card" id="lcard-${cardId}">
-            ${makeSlider(l.images,l.neighborhood,cardId)}
-            <div class="listing-body">
-              <div class="listing-unit-type">${l.type} &middot; ${l.available} available</div>
-              <div class="listing-price">$${l.price.toLocaleString()}<span>/month</span></div>
-              <div class="listing-amenities">${l.amenities.split(',').map(a=>`<span class="amenity-tag">${a.trim()}</span>`).join('')}</div>
-            </div>
-            <div class="listing-footer"><span>${l.neighborhood}, Miami FL</span><span>Contact your agent for details</span></div>
-          </div>`;
-        }).join('')}
-      </div>
+      <div class="client-hood-header"><div class="client-hood-title">${hood}</div><div class="client-hood-count">${byHood[hood].length} listing${byHood[hood].length!==1?'s':''}</div></div>
+      <div class="client-grid">${byHood[hood].map((l,i)=>{const cardId=`${l.cid}-${l.type.replace(/\s/g,'')}-${i}`;return`<div class="listing-card" id="lcard-${cardId}">${makeSlider(l.images,l.neighborhood,cardId)}<div class="listing-body"><div class="listing-unit-type">${l.type} &middot; ${l.available} available</div><div class="listing-price">$${l.price.toLocaleString()}<span>/month</span></div><div class="listing-amenities">${l.amenities.split(',').map(a=>`<span class="amenity-tag">${a.trim()}</span>`).join('')}</div></div><div class="listing-footer"><span>${l.neighborhood}, Miami FL</span><span>Contact your agent for details</span></div></div>`;}).join('')}</div>
     </div>`).join('');
 }
 
@@ -670,14 +594,7 @@ function renderClients(){
   document.getElementById('hood-checkboxes').innerHTML=hoods.map(h=>`<label class="hood-label"><input type="checkbox" value="${h}" checked> ${h}</label>`).join('');
   const tbody=document.getElementById('clients-tbody');
   if(!clients.length){tbody.innerHTML=`<tr><td colspan="6" style="text-align:center;padding:40px;color:var(--muted);font-style:italic;font-family:var(--serif)">No client links yet.</td></tr>`;return}
-  tbody.innerHTML=clients.map((cl,i)=>`<tr>
-    <td><strong style="font-weight:500">${cl.name}</strong></td>
-    <td>${cl.budget?'$'+cl.budget.replace('-','–$'):'Any'}</td>
-    <td>${(cl.neighborhoods||[]).length===hoods.length?'All':(cl.neighborhoods||[]).slice(0,3).join(', ')+((cl.neighborhoods||[]).length>3?'…':'')}</td>
-    <td>${(cl.favorites||[]).length}</td>
-    <td>${cl.created}</td>
-    <td><button class="btn btn-danger" onclick="deleteClient(${cl.id})">Remove</button></td>
-  </tr>`).join('');
+  tbody.innerHTML=clients.map((cl,i)=>`<tr><td><strong style="font-weight:500">${cl.name}</strong></td><td>${cl.budget?'$'+cl.budget.replace('-','–$'):'Any'}</td><td>${(cl.neighborhoods||[]).length===hoods.length?'All':(cl.neighborhoods||[]).slice(0,3).join(', ')+((cl.neighborhoods||[]).length>3?'…':'')}</td><td>${(cl.favorites||[]).length}</td><td>${cl.created}</td><td><button class="btn btn-danger" onclick="deleteClient(${cl.id})">Remove</button></td></tr>`).join('');
   const sel=document.getElementById('preview-client-select');
   sel.innerHTML='<option value="">All active listings</option>'+clients.map((cl,i)=>`<option value="${i}">${cl.name}</option>`).join('');
 }
@@ -690,8 +607,7 @@ async function generateClientLink(){
   const budget=document.getElementById('new-client-budget').value;
   const checked=[...document.querySelectorAll('#hood-checkboxes input:checked')].map(i=>i.value);
   const client={id:Date.now(),name,budget,neighborhoods:checked,favorites:[],created:new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})};
-  await sbUpsert('clients',client);
-  clients.push(client);
+  await sbUpsert('clients',client);clients.push(client);
   document.getElementById('generated-link-text').value=window.location.href.split('?')[0]+'?client='+client.id;
   document.getElementById('generated-link-box').style.display='block';
   document.getElementById('new-client-modal').style.display='none';
@@ -702,80 +618,11 @@ function copyLink(){const i=document.getElementById('generated-link-text');i.sel
 
 async function deleteClient(id){
   if(!confirm('Remove this client link?'))return;
-  await sbDelete('clients',id);
-  clients=clients.filter(c=>c.id!==id);
-  renderClients();
+  await sbDelete('clients',id);clients=clients.filter(c=>c.id!==id);renderClients();
 }
 
-const AGENT_PASSWORD = 'maison2025';
-let pendingView = null;
-
-function checkAuth(){
-  // Start on Client Preview — no password needed
-  showView('preview');
-}
-
-function submitPw(){
-  const val = document.getElementById('pw-input').value;
-  if(val === AGENT_PASSWORD){
-    sessionStorage.setItem('ml_authed','1');
-    document.getElementById('password-gate').style.display = 'none';
-    if(pendingView){ showView(pendingView); pendingView = null; }
-  } else {
-    document.getElementById('pw-error').style.display = 'block';
-  }
-}
-
-// Create hidden password gate (no full screen takeover)
-const gate = document.createElement('div');
-gate.id = 'password-gate';
-gate.style.cssText = 'display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:200;align-items:center;justify-content:center;flex-direction:column;gap:20px';
-gate.innerHTML = `
-  <div style="background:var(--white);padding:36px;width:320px">
-    <p style="font-family:var(--serif);font-size:20px;margin-bottom:16px;color:var(--dark)">Agent Access</p>
-    <input id="pw-input" type="password" placeholder="Enter password" style="width:100%;padding:10px 12px;border:1px solid var(--border);font-family:var(--sans);font-size:13px;outline:none;margin-bottom:10px" onkeydown="if(event.key==='Enter')submitPw()">
-    <p id="pw-error" style="color:var(--red);font-size:11px;margin-bottom:10px;display:none">Incorrect password</p>
-    <button onclick="submitPw()" style="width:100%;padding:10px;background:var(--black);color:var(--white);border:none;font-family:var(--sans);font-size:11px;letter-spacing:0.12em;text-transform:uppercase;cursor:pointer">Enter</button>
-  </div>`;
-document.body.appendChild(gate);
-
+// ─── START ────────────────────────────────────────────────────────
 init();
-checkAuth();
-
-function checkAuth() {
-  const authed = sessionStorage.getItem('ml_authed');
-  if (!authed) {
-    document.querySelector('.app').style.display = 'none';
-    const gate = document.createElement('div');
-    gate.id = 'password-gate';
-    gate.innerHTML = `
-      <div style="min-height:100vh;background:var(--black);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:20px">
-        <img src="https://images.squarespace-cdn.com/content/v1/65b9e9096f0cc81ac089a996/14e775a0-54c6-4a51-bcdd-2f07bc949cc6/Artboard+15.png?format=300w" style="width:140px;filter:brightness(0) invert(1);opacity:0.9">
-        <div style="background:var(--white);padding:36px;width:320px">
-          <p style="font-family:var(--serif);font-size:20px;margin-bottom:16px;color:var(--dark)">Agent Access</p>
-          <input id="pw-input" type="password" placeholder="Enter password" style="width:100%;padding:10px 12px;border:1px solid var(--border);font-family:var(--sans);font-size:13px;outline:none;margin-bottom:10px" onkeydown="if(event.key==='Enter')submitPw()">
-          <p id="pw-error" style="color:var(--red);font-size:11px;margin-bottom:10px;display:none">Incorrect password</p>
-          <button onclick="submitPw()" style="width:100%;padding:10px;background:var(--black);color:var(--white);border:none;font-family:var(--sans);font-size:11px;letter-spacing:0.12em;text-transform:uppercase;cursor:pointer">Enter</button>
-        </div>
-      </div>`;
-    document.body.appendChild(gate);
-  } else {
-    init();
-  }
-}
-
-function submitPw() {
-  const val = document.getElementById('pw-input').value;
-  if (val === AGENT_PASSWORD) {
-    sessionStorage.setItem('ml_authed', '1');
-    document.getElementById('password-gate').remove();
-    document.querySelector('.app').style.display = 'flex';
-    init();
-  } else {
-    document.getElementById('pw-error').style.display = 'block';
-  }
-}
-
-checkAuth();</script>
+</script>
 </body>
 </html>
