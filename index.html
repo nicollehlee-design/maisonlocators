@@ -691,7 +691,42 @@ async function deleteClient(id){
   renderClients();
 }
 
-init();
-</script>
+const AGENT_PASSWORD = 'maison2025';
+
+function checkAuth() {
+  const authed = sessionStorage.getItem('ml_authed');
+  if (!authed) {
+    document.querySelector('.app').style.display = 'none';
+    const gate = document.createElement('div');
+    gate.id = 'password-gate';
+    gate.innerHTML = `
+      <div style="min-height:100vh;background:var(--black);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:20px">
+        <img src="https://images.squarespace-cdn.com/content/v1/65b9e9096f0cc81ac089a996/14e775a0-54c6-4a51-bcdd-2f07bc949cc6/Artboard+15.png?format=300w" style="width:140px;filter:brightness(0) invert(1);opacity:0.9">
+        <div style="background:var(--white);padding:36px;width:320px">
+          <p style="font-family:var(--serif);font-size:20px;margin-bottom:16px;color:var(--dark)">Agent Access</p>
+          <input id="pw-input" type="password" placeholder="Enter password" style="width:100%;padding:10px 12px;border:1px solid var(--border);font-family:var(--sans);font-size:13px;outline:none;margin-bottom:10px" onkeydown="if(event.key==='Enter')submitPw()">
+          <p id="pw-error" style="color:var(--red);font-size:11px;margin-bottom:10px;display:none">Incorrect password</p>
+          <button onclick="submitPw()" style="width:100%;padding:10px;background:var(--black);color:var(--white);border:none;font-family:var(--sans);font-size:11px;letter-spacing:0.12em;text-transform:uppercase;cursor:pointer">Enter</button>
+        </div>
+      </div>`;
+    document.body.appendChild(gate);
+  } else {
+    init();
+  }
+}
+
+function submitPw() {
+  const val = document.getElementById('pw-input').value;
+  if (val === AGENT_PASSWORD) {
+    sessionStorage.setItem('ml_authed', '1');
+    document.getElementById('password-gate').remove();
+    document.querySelector('.app').style.display = 'flex';
+    init();
+  } else {
+    document.getElementById('pw-error').style.display = 'block';
+  }
+}
+
+checkAuth();</script>
 </body>
 </html>
