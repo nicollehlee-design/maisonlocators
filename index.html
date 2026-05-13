@@ -169,7 +169,35 @@ body{font-family:var(--sans);background:var(--cream);color:var(--dark);min-heigh
 .sync-dot{width:7px;height:7px;border-radius:50%;background:var(--green)}
 .sync-dot.syncing{background:var(--accent);animation:pulse 1s infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}
-@media(max-width:900px){.sidebar{display:none}.grid-4{grid-template-columns:1fr 1fr}}
+@media(max-width:900px){
+  .sidebar{display:none}
+  .grid-4{grid-template-columns:1fr 1fr}
+  .main{padding-bottom:70px}
+  .client-grid{grid-template-columns:1fr}
+  .community-grid{grid-template-columns:1fr}
+  .topbar{padding:0 16px}
+  .content-pad{padding:16px}
+  .client-content{padding:16px}
+  .client-filters{padding:10px 16px}
+}
+
+.mobile-nav{display:none}
+@media(max-width:900px){
+  .mobile-nav{
+    display:flex;position:fixed;bottom:0;left:0;right:0;
+    background:var(--black);border-top:1px solid rgba(255,255,255,0.1);
+    z-index:50;height:64px;
+  }
+  .mobile-nav-item{
+    flex:1;display:flex;flex-direction:column;align-items:center;
+    justify-content:center;gap:4px;cursor:pointer;
+    color:rgba(255,255,255,0.45);font-size:9px;letter-spacing:0.08em;
+    text-transform:uppercase;font-weight:400;border:none;background:none;
+    padding:8px 4px;transition:color 0.2s;
+  }
+  .mobile-nav-item.active{color:var(--accent-light)}
+  .mobile-nav-item svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.5}
+}
 </style>
 </head>
 <body>
@@ -289,7 +317,24 @@ body{font-family:var(--sans);background:var(--cream);color:var(--dark);min-heigh
     </div>
   </main>
 </div>
-
+<nav class="mobile-nav">
+  <button class="mobile-nav-item" onclick="showView('preview')">
+    <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+    Preview
+  </button>
+  <button class="mobile-nav-item" onclick="showView('clients')">
+    <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+    Clients
+  </button>
+  <button class="mobile-nav-item" onclick="showView('communities')">
+    <svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+    Communities
+  </button>
+  <button class="mobile-nav-item" onclick="showView('dashboard')">
+    <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+    Dashboard
+  </button>
+</nav>
 <div class="overlay" id="overlay" onclick="closeEditPanel()"></div>
 <div class="edit-panel" id="edit-panel">
   <div class="edit-panel-header">
@@ -425,6 +470,8 @@ function showView(name){
   document.getElementById('view-'+name).classList.add('active');
   const map={dashboard:'Dashboard',communities:'Communities',clients:'Client Links',preview:'Client Preview'};
   document.querySelectorAll('.sidebar-nav-item').forEach(n=>{if(n.textContent.trim()===map[name])n.classList.add('active')});
+  document.querySelectorAll('.mobile-nav-item').forEach(n=>n.classList.remove('active'));
+document.querySelectorAll('.mobile-nav-item').forEach(n=>{if(n.textContent.trim().toLowerCase()===name||n.textContent.trim().toLowerCase().includes(name.replace('preview','preview')))n.classList.add('active')});
   if(name==='dashboard')renderDashboard();
   if(name==='communities')renderCommunities();
   if(name==='clients')renderClients();
