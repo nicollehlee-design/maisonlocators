@@ -406,6 +406,22 @@ async function init(){
 }
 
 function showView(name){
+  const protectedViews = ['dashboard', 'communities'];
+  if (protectedViews.includes(name) && !sessionStorage.getItem('ml_authed')) {
+    pendingView = name;
+    document.getElementById('password-gate').style.display = 'flex';
+    return;
+  }
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.querySelectorAll('.sidebar-nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById('view-'+name).classList.add('active');
+  const map={dashboard:'Dashboard',communities:'Communities',clients:'Client Links',preview:'Client Preview'};
+  document.querySelectorAll('.sidebar-nav-item').forEach(n=>{if(n.textContent.trim()===map[name])n.classList.add('active')});
+  if(name==='dashboard')renderDashboard();
+  if(name==='communities')renderCommunities();
+  if(name==='clients')renderClients();
+  if(name==='preview')renderClientView();
+}
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
   document.querySelectorAll('.sidebar-nav-item').forEach(n=>n.classList.remove('active'));
   document.getElementById('view-'+name).classList.add('active');
@@ -692,6 +708,39 @@ async function deleteClient(id){
 }
 
 const AGENT_PASSWORD = 'maison2025';
+let pendingView = null;
+
+function checkAuth(){
+  // Start on Client Preview — no password needed
+  showView('preview');
+}
+
+function submitPw(){
+  const val = document.getElementById('pw-input').value;
+  if(val === AGENT_PASSWORD){
+    sessionStorage.setItem('ml_authed','1');
+    document.getElementById('password-gate').style.display = 'none';
+    if(pendingView){ showView(pendingView); pendingView = null; }
+  } else {
+    document.getElementById('pw-error').style.display = 'block';
+  }
+}
+
+// Create hidden password gate (no full screen takeover)
+const gate = document.createElement('div');
+gate.id = 'password-gate';
+gate.style.cssText = 'display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:200;align-items:center;justify-content:center;flex-direction:column;gap:20px';
+gate.innerHTML = `
+  <div style="background:var(--white);padding:36px;width:320px">
+    <p style="font-family:var(--serif);font-size:20px;margin-bottom:16px;color:var(--dark)">Agent Access</p>
+    <input id="pw-input" type="password" placeholder="Enter password" style="width:100%;padding:10px 12px;border:1px solid var(--border);font-family:var(--sans);font-size:13px;outline:none;margin-bottom:10px" onkeydown="if(event.key==='Enter')submitPw()">
+    <p id="pw-error" style="color:var(--red);font-size:11px;margin-bottom:10px;display:none">Incorrect password</p>
+    <button onclick="submitPw()" style="width:100%;padding:10px;background:var(--black);color:var(--white);border:none;font-family:var(--sans);font-size:11px;letter-spacing:0.12em;text-transform:uppercase;cursor:pointer">Enter</button>
+  </div>`;
+document.body.appendChild(gate);
+
+init();
+checkAuth();
 
 function checkAuth() {
   const authed = sessionStorage.getItem('ml_authed');
