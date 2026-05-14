@@ -354,7 +354,7 @@ const SUPABASE_URL='https://wqsafypwedcqepummdse.supabase.co';
 const SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Indxc2FmeXB3ZWRjcWVwdW1tZHNlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg2Mjk5OTAsImV4cCI6MjA5NDIwNTk5MH0.KONOE81AWpYw5-R9y6dOzIukf3dzx-xs5dlsjGrryvU';
 const HEADERS={'Content-Type':'application/json','apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY};
 
-async function sbGet(table){const r=await fetch(`${SUPABASE_URL}/rest/v1/${table}?select=*`,{headers:HEADERS});return r.json()}
+async function sbGet(table){const r=await fetch(`${SUPABASE_URL}/rest/v1/${table}?select=*`,{headers:{...HEADERS,'Cache-Control':'no-cache'}});return r.json()}
 async function sbUpsert(table,data){setSyncing(true);const r=await fetch(`${SUPABASE_URL}/rest/v1/${table}`,{method:'POST',headers:{...HEADERS,'Prefer':'resolution=merge-duplicates'},body:JSON.stringify(data)});setSyncing(false);return r}
 async function sbDelete(table,id){setSyncing(true);const r=await fetch(`${SUPABASE_URL}/rest/v1/${table}?id=eq.${id}`,{method:'DELETE',headers:HEADERS});setSyncing(false);return r}
 
