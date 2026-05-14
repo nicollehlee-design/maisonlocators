@@ -631,7 +631,7 @@ function renderClientView(){
   let selectedHoods=hoods;
   if(clientIdx!==''){const cl=clients[parseInt(clientIdx)];if(cl)selectedHoods=cl.neighborhoods}
   let listings=[];
-  communities.filter(c=>c.active&&selectedHoods.includes(c.neighborhood)).forEach(c=>{(c.units||[]).forEach(u=>listings.push({cid:c.id,neighborhood:c.neighborhood,amenities:c.amenities,images:c.images||[],...u}))});
+  communities.filter(c=>c.active&&selectedHoods.includes(c.neighborhood)).forEach(c=>{(c.units||[]).forEach(u=>listings.push({cid:c.id,neighborhood:c.neighborhood,amenities:c.amenities,images:c.images||[],special:c.special||'',...u}))});
   if(typeF)listings=listings.filter(l=>l.type===typeF);
   if(hoodF)listings=listings.filter(l=>l.neighborhood===hoodF);
   if(priceF){const[min,max]=priceF.split('-').map(Number);listings=listings.filter(l=>l.price>=min&&l.price<=max)}
