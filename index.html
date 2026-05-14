@@ -78,6 +78,7 @@ body{font-family:var(--sans);background:var(--cream);color:var(--dark);min-heigh
 .card-footer a{font-size:11px;color:var(--accent-dark);text-decoration:none}
 .card-footer a:hover{text-decoration:underline}
 .commission-badge{font-size:11px;font-weight:500;color:var(--green);background:#EDF7F1;padding:2px 8px;border-radius:2px}
+  .special-sticker{position:absolute;top:12px;right:12px;background:#F0C419;color:#1A1A18;font-size:10px;font-weight:500;letter-spacing:0.06em;text-transform:uppercase;padding:5px 10px;z-index:3;box-shadow:0 2px 8px rgba(0,0,0,0.2)}
 .edit-panel{position:fixed;top:0;right:0;bottom:0;width:480px;background:var(--white);border-left:1px solid var(--border);z-index:100;overflow-y:auto;transform:translateX(100%);transition:transform 0.28s ease;box-shadow:-12px 0 40px rgba(0,0,0,0.08)}
 .edit-panel.open{transform:translateX(0)}
 .edit-panel-header{padding:20px 26px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:var(--white);z-index:1}
@@ -518,6 +519,7 @@ function renderCommunities(){
             <div class="card-img">
               ${(c.images||[]).length>0?`<img src="${c.images[0]}" alt="" onerror="this.parentElement.innerHTML='<div class=card-img-placeholder>M</div>'">`:'<div class="card-img-placeholder">M</div>'}
               ${(c.images||[]).length>1?`<div class="card-img-count">+${c.images.length-1} more</div>`:''}
+              ${c.special?`<div class="special-sticker">${c.special}</div>`:''}
             </div>
             <div class="card-header">
               <div><div class="neighborhood">${c.neighborhood}</div><div class="name">${c.name}</div></div>
@@ -548,6 +550,7 @@ function openEditPanel(id){
       </select>
     </div>
     <div class="form-group"><label class="form-label">Amenities</label><input class="form-input" id="ep-amenities" value="${c.amenities||''}"></div>
+    <div class="form-group"><label class="form-label">Special Offer</label><input class="form-input" id="ep-special" placeholder="e.g. 1 Month Free, $500 Off" value="${c.special||''}"></div>
     <div class="form-group"><label class="form-label">Commission</label>
       <select class="form-select" id="ep-commission-type" onchange="toggleCommissionInput()">
         <option value="" ${!commParts[0]?'selected':''}>Not set</option>
@@ -597,6 +600,7 @@ async function saveEditPanel(){
   const c=communities.find(x=>x.id===editingId);
   c.active=document.getElementById('ep-active').value==='true';
   c.amenities=document.getElementById('ep-amenities').value;
+  c.special=document.getElementById('ep-special').value;
   const commType=document.getElementById('ep-commission-type').value;
   c.commission=commType==='flat'?'flat:'+document.getElementById('ep-commission-flat').value:commType;
   c.images=[];document.querySelectorAll('#img-editor .img-url-row input').forEach(inp=>{if(inp.value.trim())c.images.push(inp.value.trim())});
@@ -607,9 +611,10 @@ async function saveEditPanel(){
 function closeEditPanel(){document.getElementById('edit-panel').classList.remove('open');document.getElementById('overlay').classList.remove('open');editingId=null}
 
 const sliderIdx={};
-function makeSlider(images,neighborhood,cardId){
+function makeSlider(images,neighborhood,cardId,special){
   const imgs=images&&images.length>0?images:[];
-  return`<div class="slider-wrap" id="slider-${cardId}"><div class="neighborhood-tag">${neighborhood}</div><div class="slider-track" id="track-${cardId}">${imgs.length>0?imgs.map(url=>`<div class="slide"><img src="${url}" alt="" onerror="this.parentElement.innerHTML='<div class=slide-placeholder>M</div>'"></div>`).join(''):'<div class="slide"><div class="slide-placeholder">M</div></div>'}</div>${imgs.length>1?`<button class="slider-btn slider-prev" onclick="slideMove('${cardId}',-1,${imgs.length});event.stopPropagation()">&#8249;</button><button class="slider-btn slider-next" onclick="slideMove('${cardId}',1,${imgs.length});event.stopPropagation()">&#8250;</button><div class="slider-dots" id="dots-${cardId}">${imgs.map((_,i)=>`<div class="slider-dot ${i===0?'active':''}" onclick="slideTo('${cardId}',${i},${imgs.length});event.stopPropagation()"></div>`).join('')}</div><div class="slider-img-count" id="count-${cardId}">1 / ${imgs.length}</div>`:''}<button class="fav-btn" id="fav-${cardId}" onclick="toggleFav('${cardId}',this);event.stopPropagation()">&#9825;</button></div>`;
+  return`<div class="slider-wrap" id="slider-${cardId}"><div class="neighborhood-tag">${neighborhood}</div><div class="slider-track" id="track-${cardId}">${imgs.length>0?imgs.map(url=>`<div class="slide"><img src="${url}" alt="" onerror="this.parentElement.innerHTML='<div class=slide-placeholder>M</div>'"></div>`).join(''):'<div class="slide"><div class="slide-placeholder">M</div></div>'}</div>${imgs.length>1?`<button class="slider-btn slider-prev" onclick="slideMove('${cardId}',-1,${imgs.length});event.stopPropagation()">&#8249;</button><button class="slider-btn slider-next" onclick="slideMove('${cardId}',1,${imgs.length});event.stopPropagation()">&#8250;</button><div class="slider-dots" id="dots-${cardId}">${imgs.map((_,i)=>`<div class="slider-dot ${i===0?'active':''}" onclick="slideTo('${cardId}',${i},${imgs.length});event.stopPropagation()"></div>`).join('')}</div><div class="slider-img-count" id="count-${cardId}">1 / ${imgs.length}</div>`:''}${special?`<div class="special-sticker">${special}</div>`:''}
+<button class="fav-btn" id="fav-${cardId}" onclick="toggleFav('${cardId}',this);event.stopPropagation()">&#9825;</button></div>`;
 }
 function slideMove(id,dir,total){sliderIdx[id]=((sliderIdx[id]||0)+dir+total)%total;slideTo(id,sliderIdx[id],total)}
 function slideTo(id,idx,total){sliderIdx[id]=idx;const t=document.getElementById('track-'+id);if(t)t.style.transform=`translateX(-${idx*100}%)`;const d=document.getElementById('dots-'+id);if(d)[...d.children].forEach((x,i)=>x.classList.toggle('active',i===idx));const c=document.getElementById('count-'+id);if(c)c.textContent=`${idx+1} / ${total}`}
@@ -636,7 +641,7 @@ function renderClientView(){
   content.innerHTML=Object.keys(byHood).sort().map(hood=>`
     <div class="client-hood-section">
       <div class="client-hood-header"><div class="client-hood-title">${hood}</div><div class="client-hood-count">${byHood[hood].length} listing${byHood[hood].length!==1?'s':''}</div></div>
-      <div class="client-grid">${byHood[hood].map((l,i)=>{const cardId=`${l.cid}-${l.type.replace(/\s/g,'')}-${i}`;return`<div class="listing-card" id="lcard-${cardId}">${makeSlider(l.images,l.neighborhood,cardId)}<div class="listing-body"><div class="listing-unit-type">${l.type} &middot; ${l.available} available</div><div class="listing-price">$${l.price.toLocaleString()}<span>/month</span></div><div class="listing-amenities">${l.amenities.split(',').map(a=>`<span class="amenity-tag">${a.trim()}</span>`).join('')}</div></div><div class="listing-footer"><span>${l.neighborhood}, Miami FL</span><span>Contact your agent for details</span></div></div>`;}).join('')}</div>
+      <div class="client-grid">${byHood[hood].map((l,i)=>{const cardId=`${l.cid}-${l.type.replace(/\s/g,'')}-${i}`;return`<div class="listing-card" id="lcard-${cardId}">${makeSlider(l.images,l.neighborhood,cardId,l.special)}<div class="listing-body"><div class="listing-unit-type">${l.type} &middot; ${l.available} available</div><div class="listing-price">$${l.price.toLocaleString()}<span>/month</span></div><div class="listing-amenities">${l.amenities.split(',').map(a=>`<span class="amenity-tag">${a.trim()}</span>`).join('')}</div></div><div class="listing-footer"><span>${l.neighborhood}, Miami FL</span><span>Contact your agent for details</span></div></div>`;}).join('')}</div>
     </div>`).join('');
 }
 
