@@ -458,7 +458,7 @@ async function init(){
   communities=dbComms;
   let dbClients=await sbGet('clients');
   clients=Array.isArray(dbClients)?dbClients:[];
-  renderDashboard();renderCommunities();renderClients();renderClientView();
+  renderDashboard();renderCommunities();renderClients();renderClientView();applySofiaParams();
 }
 
 // ─── NAVIGATION ───────────────────────────────────────────────────
@@ -676,7 +676,41 @@ async function deleteClient(id){
   if(!confirm('Remove this client link?'))return;
   await sbDelete('clients',id);clients=clients.filter(c=>c.id!==id);renderClients();
 }
-
+// ─── SOFIA URL PARAMETER SUPPORT ─────────────────────────────────
+function applySofiaParams(){
+  const p=new URLSearchParams(window.location.search);
+  if(!p.has('budget')&&!p.has('area')&&!p.has('beds'))return;
+  // Auto-switch to client preview
+  showView('preview');
+  // Apply budget filter
+  if(p.has('budget')){
+    const b=parseInt(p.get('budget'));
+    const sel=document.getElementById('client-price-filter');
+    if(b<2000)sel.value='0-2000';
+    else if(b<3000)sel.value='2000-3000';
+    else if(b<4000)sel.value='3000-4000';
+    else sel.value='4000-9999';
+  }
+  // Apply neighborhood filter
+  if(p.has('area')){
+    const area=p.get('area').toLowerCase();
+    const hoodSel=document.getElementById('client-hood-filter');
+    [...hoodSel.options].forEach(o=>{
+      if(o.value.toLowerCase().includes(area))hoodSel.value=o.value;
+    });
+  }
+  // Apply bedroom filter
+  if(p.has('beds')){
+    const beds=p.get('beds');
+    const typeSel=document.getElementById('client-type-filter');
+    if(beds==='0'||beds==='studio')typeSel.value='Studio';
+    else if(beds==='1')typeSel.value='1 Bed';
+    else if(beds==='2')typeSel.value='2 Bed';
+    else if(beds==='3')typeSel.value='3 Bed';
+  }
+  renderClientView();
+}
+  
 // ─── START ────────────────────────────────────────────────────────
 init();
 </script>
