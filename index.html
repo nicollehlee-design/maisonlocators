@@ -680,6 +680,7 @@ async function deleteClient(id){
 function applySofiaParams(){
   const p=new URLSearchParams(window.location.search);
   if(!p.has('budget')&&!p.has('area')&&!p.has('beds'))return;
+  setTimeout(()=>{
   // Auto-switch to client preview
   showView('preview');
   // Apply budget filter
