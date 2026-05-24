@@ -311,7 +311,7 @@ body{font-family:var(--sans);background:var(--cream);color:var(--dark);min-heigh
           <option value="">All unit types</option><option value="Studio">Studio</option>
           <option value="1 Bed">1 Bed</option><option value="2 Bed">2 Bed</option><option value="3 Bed">3 Bed</option>
         </select>
-        <select class="filter-select" id="client-hood-filter" onchange="renderClientView()"><option value="">All neighborhoods</option></select>
+        <div id="client-hood-filter-wrap" style="display:flex;flex-wrap:wrap;gap:6px;align-items:center"></div>
         <select class="filter-select" id="client-price-filter" onchange="renderClientView()">
           <option value="">Any price</option><option value="0-2000">Under $2,000</option>
           <option value="2000-3000">$2,000–$3,000</option><option value="3000-4000">$3,000–$4,000</option><option value="4000-9999">$4,000+</option>
@@ -627,13 +627,16 @@ function renderClientView(){
   const clientIdx=document.getElementById('preview-client-select').value;
   const hoods=getNeighborhoods();
   const hoodSel=document.getElementById('client-hood-filter');const cur=hoodSel.value;
-  hoodSel.innerHTML='<option value="">All neighborhoods</option>'+hoods.map(h=>`<option value="${h}" ${h===cur?'selected':''}>${h}</option>`).join('');
+  const hoodWrap=document.getElementById('client-hood-filter-wrap');
+const checkedHoods=new Set([...document.querySelectorAll('#client-hood-filter-wrap input:checked')].map(i=>i.value));
+hoodWrap.innerHTML=hoods.map(h=>`<label style="display:flex;align-items:center;gap:4px;font-size:11px;cursor:pointer;background:var(--cream);padding:5px 10px;border:1px solid var(--border);white-space:nowrap"><input type="checkbox" value="${h}" ${checkedHoods.has(h)||checkedHoods.size===0?'checked':''} onchange="renderClientView()" style="accent-color:var(--accent-dark)"> ${h}</label>`).join('');
   let selectedHoods=hoods;
   if(clientIdx!==''){const cl=clients[parseInt(clientIdx)];if(cl)selectedHoods=cl.neighborhoods}
   let listings=[];
   communities.filter(c=>c.active&&selectedHoods.includes(c.neighborhood)).forEach(c=>{(c.units||[]).forEach(u=>listings.push({cid:c.id,neighborhood:c.neighborhood,amenities:c.amenities,images:c.images||[],special:c.special||'',...u}))});
   if(typeF)listings=listings.filter(l=>l.type===typeF);
-  if(hoodF)listings=listings.filter(l=>l.neighborhood===hoodF);
+  const selectedHoodBoxes=[...document.querySelectorAll('#client-hood-filter-wrap input:checked')].map(i=>i.value);
+if(selectedHoodBoxes.length>0&&selectedHoodBoxes.length<hoods.length)listings=listings.filter(l=>selectedHoodBoxes.includes(l.neighborhood));
   if(priceF){const[min,max]=priceF.split('-').map(Number);listings=listings.filter(l=>l.price>=min&&l.price<=max)}
   const content=document.getElementById('client-content');
   if(!listings.length){content.innerHTML='<div class="no-results">No listings match your current filters.</div>';return}
