@@ -531,9 +531,9 @@ function applySofiaParams(){
       else sel.value='4000-9999';
     }
     if(p.has('area')){
-      const area=p.get('area').toLowerCase();
+      const areas=p.get('area').toLowerCase().split(',').map(a=>a.trim());
       document.querySelectorAll('#client-hood-filter-wrap input').forEach(cb=>{
-        cb.checked=cb.value.toLowerCase().includes(area);
+        cb.checked=areas.some(area=>cb.value.toLowerCase().includes(area));
       });
     }
     if(p.has('beds')){
