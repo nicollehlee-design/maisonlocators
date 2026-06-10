@@ -338,7 +338,7 @@ const SUPABASE_URL='https://wqsafypwedcqepummdse.supabase.co';
 const SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Indxc2FmeXB3ZWRjcWVwdW1tZHNlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg2Mjk5OTAsImV4cCI6MjA5NDIwNTk5MH0.KONOE81AWpYw5-R9y6dOzIukf3dzx-xs5dlsjGrryvU';
 const HEADERS={'Content-Type':'application/json','apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY};
 async function sbGet(table){const r=await fetch(`${SUPABASE_URL}/rest/v1/${table}?select=*`,{headers:{...HEADERS,'Cache-Control':'no-cache'}});return r.json()}
-async function sbUpsert(table,data){setSyncing(true);const r=await fetch(`${SUPABASE_URL}/rest/v1/${table}`,{method:'POST',headers:{...HEADERS,'Prefer':'resolution=merge-duplicates'},body:JSON.stringify(data)});setSyncing(false);return r}
+async function sbUpsert(table,data){setSyncing(true);const r=await fetch(`${SUPABASE_URL}/rest/v1/${table}`,{method:'POST',headers:{...HEADERS,'Prefer':'resolution=merge-duplicates,return=representation'},body:JSON.stringify(Array.isArray(data)?data:[data])});setSyncing(false);return r}
 async function sbDelete(table,id){setSyncing(true);const r=await fetch(`${SUPABASE_URL}/rest/v1/${table}?id=eq.${id}`,{method:'DELETE',headers:HEADERS});setSyncing(false);return r}
 function setSyncing(on){const dot=document.getElementById('sync-dot');const lbl=document.getElementById('sync-label');if(!dot)return;if(on){dot.className='sync-dot syncing';lbl.textContent='Saving...';}else{dot.className='sync-dot';lbl.textContent='Synced';}}
 const AGENT_PASSWORD='maison2025';
@@ -461,7 +461,7 @@ async function saveEditPanel(){
   c.commission=commType==='flat'?'flat:'+document.getElementById('ep-commission-flat').value:commType;
   c.images=[];document.querySelectorAll('#img-editor .img-url-row input').forEach(inp=>{if(inp.value.trim())c.images.push(inp.value.trim())});
   c.units=[];document.querySelectorAll('#units-editor .unit-edit-row').forEach(row=>{const sel=row.querySelector('select');const inputs=row.querySelectorAll('input');if(inputs[0].value)c.units.push({type:sel.value,price:parseInt(inputs[0].value)||0,available:parseInt(inputs[1].value)||0})});
-  await sbUpsert('communities',c);closeEditPanel();renderCommunities();renderDashboard();
+  await sbUpsert('communities',c);communities=communities.map(x=>x.id===c.id?c:x);closeEditPanel();renderCommunities();renderDashboard();
 }
 function closeEditPanel(){document.getElementById('edit-panel').classList.remove('open');document.getElementById('overlay').classList.remove('open');editingId=null}
 const sliderIdx={};
