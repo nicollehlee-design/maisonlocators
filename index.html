@@ -121,7 +121,7 @@ body{font-family:var(--sans);background:var(--cream);color:var(--dark);min-heigh
 .slider-wrap{position:relative;height:140px;background:var(--cream-2);overflow:hidden}
 .slider-track{display:flex;height:100%;transition:transform 0.4s ease}
 .slide{min-width:100%;height:100%;flex-shrink:0;overflow:hidden}
-.slide img{width:100%;height:100%;object-fit:cover;object-position:center center}
+.slide img{width:100%;height:100%;object-fit:contain;background:var(--cream-2);object-position:center center}
 .slide-placeholder{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-size:60px;color:var(--cream-3);font-style:italic}
 .slider-btn{position:absolute;top:50%;transform:translateY(-50%);background:rgba(255,255,255,0.88);border:none;width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;z-index:2;transition:background 0.15s}
 .slider-btn:hover{background:var(--white)}
@@ -338,7 +338,7 @@ const SUPABASE_URL='https://wqsafypwedcqepummdse.supabase.co';
 const SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Indxc2FmeXB3ZWRjcWVwdW1tZHNlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg2Mjk5OTAsImV4cCI6MjA5NDIwNTk5MH0.KONOE81AWpYw5-R9y6dOzIukf3dzx-xs5dlsjGrryvU';
 const HEADERS={'Content-Type':'application/json','apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY};
 async function sbGet(table){const r=await fetch(`${SUPABASE_URL}/rest/v1/${table}?select=*`,{headers:{...HEADERS,'Cache-Control':'no-cache'}});return r.json()}
-async function sbUpsert(table,data){setSyncing(true);const r=await fetch(`${SUPABASE_URL}/rest/v1/${table}`,{method:'POST',headers:{...HEADERS,'Prefer':'resolution=merge-duplicates,return=representation'},body:JSON.stringify(Array.isArray(data)?data:[data])});setSyncing(false);return r}
+async function sbUpsert(table,data){setSyncing(true);const rows=Array.isArray(data)?data:[data];let r;for(const row of rows){r=await fetch(`${SUPABASE_URL}/rest/v1/${table}?id=eq.${row.id}`,{method:'PATCH',headers:{...HEADERS,'Prefer':'return=representation'},body:JSON.stringify(row)});}setSyncing(false);return r}
 async function sbDelete(table,id){setSyncing(true);const r=await fetch(`${SUPABASE_URL}/rest/v1/${table}?id=eq.${id}`,{method:'DELETE',headers:HEADERS});setSyncing(false);return r}
 function setSyncing(on){const dot=document.getElementById('sync-dot');const lbl=document.getElementById('sync-label');if(!dot)return;if(on){dot.className='sync-dot syncing';lbl.textContent='Saving...';}else{dot.className='sync-dot';lbl.textContent='Synced';}}
 const AGENT_PASSWORD='maison2025';
