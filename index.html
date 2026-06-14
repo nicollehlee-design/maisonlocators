@@ -115,14 +115,14 @@ body{font-family:var(--sans);background:var(--cream);color:var(--dark);min-heigh
 .client-hood-header{display:flex;align-items:baseline;gap:14px;margin-bottom:18px;padding-bottom:12px;border-bottom:2px solid var(--black)}
 .client-hood-title{font-family:var(--serif);font-size:26px;font-weight:400;color:var(--dark)}
 .client-hood-count{font-size:11px;color:var(--muted);letter-spacing:0.08em}
-.client-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:22px}
+.client-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
 .listing-card{background:var(--white);border:1px solid var(--border);overflow:hidden;transition:all 0.22s;position:relative}
 .listing-card:hover{box-shadow:0 8px 32px rgba(0,0,0,0.09);transform:translateY(-2px)}
 .listing-card.favorited{border-color:var(--accent)}
 .slider-wrap{position:relative;height:220px;background:var(--cream-2);overflow:hidden}
 .slider-track{display:flex;height:100%;transition:transform 0.4s ease}
 .slide{min-width:100%;height:100%;flex-shrink:0;overflow:hidden}
-.slide img{width:100%;height:100%;object-fit:cover;object-position:center top}
+.slide img{width:100%;height:100%;object-fit:contain;object-position:center center;background:#EDE8DF}
 .slide-placeholder{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-size:60px;color:var(--cream-3);font-style:italic}
 .slider-btn{position:absolute;top:50%;transform:translateY(-50%);background:rgba(255,255,255,0.88);border:none;width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;z-index:2;transition:background 0.15s}
 .slider-btn:hover{background:var(--white)}
@@ -176,7 +176,7 @@ body{font-family:var(--sans);background:var(--cream);color:var(--dark);min-heigh
   .sidebar{display:none}
   .grid-4{grid-template-columns:1fr 1fr}
   .main{padding-bottom:70px}
-  .client-grid{grid-template-columns:1fr;gap:1px;max-width:400px;margin:0 auto}
+  .client-grid{grid-template-columns:repeat(2,1fr);gap:8px;max-width:100%;margin:0}
   .listing-card{max-width:100%;margin:0}
   .slider-wrap{height:220px} 
   .community-grid{grid-template-columns:1fr}
