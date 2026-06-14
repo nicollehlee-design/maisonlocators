@@ -57,7 +57,6 @@ body{font-family:var(--sans);background:var(--cream);color:var(--dark);min-heigh
 .community-card:hover{background:var(--cream)}
 .card-img{height:140px;background:var(--cream-2);position:relative;overflow:hidden}
 .card-img img{width:100%;height:100%;object-fit:cover;object-position:center top}
-.slide img{width:100%;height:100%;object-fit:cover;object-position:center center}
 .card-img-placeholder{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-size:40px;color:var(--cream-3);font-style:italic}
 .card-img-count{position:absolute;bottom:8px;right:8px;background:rgba(0,0,0,0.6);color:var(--white);font-size:10px;padding:3px 8px;letter-spacing:0.06em}
 .card-header{padding:14px 16px 12px;border-bottom:1px solid var(--cream-2);display:flex;justify-content:space-between;align-items:flex-start}
@@ -110,19 +109,41 @@ body{font-family:var(--sans);background:var(--cream);color:var(--dark);min-heigh
 .client-filters{background:var(--white);padding:14px 36px;border-bottom:1px solid var(--border);display:flex;gap:10px;align-items:center;flex-wrap:wrap;position:sticky;top:0;z-index:5}
 .filter-select{padding:8px 14px;border:1px solid var(--border);font-family:var(--sans);font-size:12px;font-weight:300;background:var(--white);color:var(--dark);cursor:pointer;outline:none}
 .filter-select:focus{border-color:var(--accent)}
-.client-content{padding:28px 36px; max-width:500px;margin:0 auto}
+.client-content{padding:28px 36px}
 .client-hood-section{margin-bottom:40px}
 .client-hood-header{display:flex;align-items:baseline;gap:14px;margin-bottom:18px;padding-bottom:12px;border-bottom:2px solid var(--black)}
 .client-hood-title{font-family:var(--serif);font-size:26px;font-weight:400;color:var(--dark)}
 .client-hood-count{font-size:11px;color:var(--muted);letter-spacing:0.08em}
-.client-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
-.listing-card{background:var(--white);border:1px solid var(--border);overflow:hidden;transition:all 0.22s;position:relative}
+/* DESKTOP: always 2 columns */
+.client-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:22px}
+.listing-card{background:var(--white);border:1px solid var(--border);overflow:hidden;transition:all 0.22s;position:relative;cursor:pointer}
 .listing-card:hover{box-shadow:0 8px 32px rgba(0,0,0,0.09);transform:translateY(-2px)}
 .listing-card.favorited{border-color:var(--accent)}
 .slider-wrap{position:relative;height:200px;background:var(--cream-2);overflow:hidden}
 .slider-track{display:flex;height:100%;transition:transform 0.4s ease}
 .slide{min-width:100%;height:100%;flex-shrink:0;overflow:hidden}
-.slide img{width:100%;height:100%;object-fit:contain;object-position:center center;background:#EDE8DF}
+.slide img{width:100%;height:100%;object-fit:cover;object-position:center center}
+/* POPUP MODAL */
+.listing-modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:200;align-items:flex-end;justify-content:center}
+.listing-modal-overlay.open{display:flex}
+.listing-modal{background:var(--white);width:100%;max-width:600px;max-height:90vh;overflow-y:auto;border-radius:16px 16px 0 0;position:relative;animation:slideUp 0.3s ease}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.listing-modal-close{position:absolute;top:16px;right:16px;background:rgba(0,0,0,0.1);border:none;width:32px;height:32px;border-radius:50%;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:2;line-height:1}
+.listing-modal-imgs{position:relative;height:260px;background:var(--cream-2);overflow:hidden}
+.listing-modal-track{display:flex;height:100%;transition:transform 0.4s ease}
+.listing-modal-slide{min-width:100%;height:100%;flex-shrink:0}
+.listing-modal-slide img{width:100%;height:100%;object-fit:cover;object-position:center center}
+.listing-modal-prev,.listing-modal-next{position:absolute;top:50%;transform:translateY(-50%);background:rgba(255,255,255,0.88);border:none;width:36px;height:36px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;z-index:2}
+.listing-modal-prev{left:12px}
+.listing-modal-next{right:12px}
+.listing-modal-count{position:absolute;top:12px;right:12px;background:rgba(0,0,0,0.55);color:var(--white);font-size:10px;padding:3px 8px;letter-spacing:0.06em}
+.listing-modal-hood{position:absolute;top:12px;left:12px;background:var(--black);color:var(--accent-light);font-size:9px;letter-spacing:0.15em;text-transform:uppercase;padding:5px 12px;font-weight:400}
+.listing-modal-body{padding:24px}
+.listing-modal-type{font-size:9px;letter-spacing:0.18em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.listing-modal-price{font-family:var(--serif);font-size:32px;font-weight:400;color:var(--dark);margin-bottom:14px}
+.listing-modal-price span{font-size:14px;font-weight:300;color:var(--muted);font-family:var(--sans)}
+.listing-modal-amenities{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:18px}
+.listing-modal-footer{font-size:11px;color:var(--muted);border-top:1px solid var(--cream-2);padding-top:14px}
 .slide-placeholder{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-size:60px;color:var(--cream-3);font-style:italic}
 .slider-btn{position:absolute;top:50%;transform:translateY(-50%);background:rgba(255,255,255,0.88);border:none;width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;z-index:2;transition:background 0.15s}
 .slider-btn:hover{background:var(--white)}
@@ -176,14 +197,17 @@ body{font-family:var(--sans);background:var(--cream);color:var(--dark);min-heigh
   .sidebar{display:none}
   .grid-4{grid-template-columns:1fr 1fr}
   .main{padding-bottom:70px}
-  .client-grid{grid-template-columns:1fr;gap:12px;max-width:100%;margin:0}
+  /* MOBILE: 1 column */
+  .client-grid{grid-template-columns:1fr;gap:16px;max-width:100%;margin:0}
   .listing-card{max-width:100%;margin:0}
-  .slider-wrap{height:180px} 
+  .slider-wrap{height:220px}
+  .listing-modal-imgs{height:220px}
   .community-grid{grid-template-columns:1fr}
   .topbar{padding:0 16px}
   .content-pad{padding:16px}
-  .client-content{padding:8px 16px}
+  .client-content{padding:8px 8px}
   .client-filters{padding:10px 16px}
+  .listing-body{padding:14px 14px 10px}
 }
 .mobile-nav{display:none}
 @media(max-width:900px){
@@ -325,6 +349,14 @@ body{font-family:var(--sans);background:var(--cream);color:var(--dark);min-heigh
     Dashboard
   </button>
 </nav>
+<!-- Listing detail popup -->
+<div class="listing-modal-overlay" id="listing-modal-overlay" onclick="closeListingModal(event)">
+  <div class="listing-modal" id="listing-modal">
+    <button class="listing-modal-close" onclick="closeListingModal()">&times;</button>
+    <div class="listing-modal-imgs" id="lm-imgs"></div>
+    <div class="listing-modal-body" id="lm-body"></div>
+  </div>
+</div>
 <div class="overlay" id="overlay" onclick="closeEditPanel()"></div>
 <div class="edit-panel" id="edit-panel">
   <div class="edit-panel-header">
@@ -491,7 +523,7 @@ function renderClientView(){
   const content=document.getElementById('client-content');
   if(!listings.length){content.innerHTML='<div class="no-results">No listings match your current filters.</div>';return}
   const byHood={};listings.forEach(l=>{if(!byHood[l.neighborhood])byHood[l.neighborhood]=[];byHood[l.neighborhood].push(l)});
-  content.innerHTML=Object.keys(byHood).sort().map(hood=>`<div class="client-hood-section"><div class="client-hood-header"><div class="client-hood-title">${hood}</div><div class="client-hood-count">${byHood[hood].length} listing${byHood[hood].length!==1?'s':''}</div></div><div class="client-grid">${byHood[hood].map((l,i)=>{const cardId=`${l.cid}-${l.type.replace(/\s/g,'')}-${i}`;return`<div class="listing-card" id="lcard-${cardId}">${makeSlider(l.images,l.neighborhood,cardId,l.special)}<div class="listing-body"><div class="listing-unit-type">${l.type} &middot; ${l.available} available</div><div class="listing-price">$${l.price.toLocaleString()}<span>/month</span></div><div class="listing-amenities">${l.amenities.split(',').map(a=>`<span class="amenity-tag">${a.trim()}</span>`).join('')}</div></div><div class="listing-footer"><span>${l.neighborhood}, Miami FL</span><span>Contact your agent for details</span></div></div>`;}).join('')}</div></div>`).join('');
+  content.innerHTML=Object.keys(byHood).sort().map(hood=>`<div class="client-hood-section"><div class="client-hood-header"><div class="client-hood-title">${hood}</div><div class="client-hood-count">${byHood[hood].length} listing${byHood[hood].length!==1?'s':''}</div></div><div class="client-grid">${byHood[hood].map((l,i)=>{const cardId=`${l.cid}-${l.type.replace(/\s/g,'')}-${i}`;return`<div class="listing-card" id="lcard-${cardId}" onclick="openListingModal(${JSON.stringify(l).replace(/"/g,'&quot;')})">${makeSlider(l.images,l.neighborhood,cardId,l.special)}<div class="listing-body"><div class="listing-unit-type">${l.type} &middot; ${l.available} available</div><div class="listing-price">$${l.price.toLocaleString()}<span>/month</span></div><div class="listing-amenities">${l.amenities.split(',').map(a=>`<span class="amenity-tag">${a.trim()}</span>`).join('')}</div></div><div class="listing-footer"><span>${l.neighborhood}, Miami FL</span><span>Contact agent</span></div></div>`;}).join('')}</div></div>`).join('');
 }
 function renderClients(){
   const hoods=getNeighborhoods();
@@ -522,32 +554,35 @@ function applySofiaParams(){
   if(!p.has('budget')&&!p.has('area')&&!p.has('beds'))return;
   function applyFilters(){
     showView('preview');
-    if(p.has('budget')){
-      const b=parseInt(p.get('budget'));
-      const sel=document.getElementById('client-price-filter');
-      if(b<2000)sel.value='0-2000';
-      else if(b<3000)sel.value='2000-3000';
-      else if(b<4000)sel.value='3000-4000';
-      else sel.value='4000-9999';
-    }
-    if(p.has('area')){
-      const areas=p.get('area').toLowerCase().split(',').map(a=>a.trim());
-      document.querySelectorAll('#client-hood-filter-wrap input').forEach(cb=>{
-        cb.checked=areas.some(area=>cb.value.toLowerCase().includes(area));
-      });
-    }
-    if(p.has('beds')){
-      const beds=p.get('beds');
-      const typeSel=document.getElementById('client-type-filter');
-      if(beds==='0'||beds==='studio')typeSel.value='Studio';
-      else if(beds==='1')typeSel.value='1 Bed';
-      else if(beds==='2')typeSel.value='2 Bed';
-      else if(beds==='3')typeSel.value='3 Bed';
-    }
+    if(p.has('budget')){const b=parseInt(p.get('budget'));const sel=document.getElementById('client-price-filter');if(b<2000)sel.value='0-2000';else if(b<3000)sel.value='2000-3000';else if(b<4000)sel.value='3000-4000';else sel.value='4000-9999';}
+    if(p.has('area')){const areas=p.get('area').toLowerCase().split(',').map(a=>a.trim());document.querySelectorAll('#client-hood-filter-wrap input').forEach(cb=>{cb.checked=areas.some(area=>cb.value.toLowerCase().includes(area));});}
+    if(p.has('beds')){const beds=p.get('beds');const typeSel=document.getElementById('client-type-filter');if(beds==='0'||beds==='studio')typeSel.value='Studio';else if(beds==='1')typeSel.value='1 Bed';else if(beds==='2')typeSel.value='2 Bed';else if(beds==='3')typeSel.value='3 Bed';}
     renderClientView();
   }
   setTimeout(applyFilters,800);
   setTimeout(applyFilters,2000);
+}
+let modalSlideIdx=0;
+function openListingModal(l){
+  modalSlideIdx=0;
+  const imgs=l.images||[];
+  const imgHtml=imgs.length>0?`<div class="listing-modal-track" id="lm-track">${imgs.map(url=>`<div class="listing-modal-slide"><img src="${url}" alt="" onerror="this.style.opacity=0"></div>`).join('')}</div>${imgs.length>1?`<button class="listing-modal-prev" onclick="lmSlide(-1,${imgs.length})">&#8249;</button><button class="listing-modal-next" onclick="lmSlide(1,${imgs.length})">&#8250;</button><div class="listing-modal-count" id="lm-count">1 / ${imgs.length}</div>`:''}`:` <div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-size:60px;color:var(--cream-3)">M</div>`;
+  document.getElementById('lm-imgs').innerHTML=`<div class="listing-modal-hood">${l.neighborhood}</div>${imgHtml}`;
+  document.getElementById('lm-body').innerHTML=`<div class="listing-modal-type">${l.type} &middot; ${l.available} available</div><div class="listing-modal-price">$${l.price.toLocaleString()}<span>/month</span></div><div class="listing-modal-amenities">${l.amenities.split(',').map(a=>`<span class="amenity-tag">${a.trim()}</span>`).join('')}</div><div class="listing-modal-footer">${l.neighborhood}, Miami FL &nbsp;&middot;&nbsp; Contact your agent for details</div>`;
+  document.getElementById('listing-modal-overlay').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function lmSlide(dir,total){
+  modalSlideIdx=((modalSlideIdx+dir)+total)%total;
+  const t=document.getElementById('lm-track');
+  if(t)t.style.transform=`translateX(-${modalSlideIdx*100}%)`;
+  const c=document.getElementById('lm-count');
+  if(c)c.textContent=`${modalSlideIdx+1} / ${total}`;
+}
+function closeListingModal(e){
+  if(e&&e.target!==document.getElementById('listing-modal-overlay')&&!e.target.classList.contains('listing-modal-close'))return;
+  document.getElementById('listing-modal-overlay').classList.remove('open');
+  document.body.style.overflow='';
 }
 init();
 </script>
