@@ -196,6 +196,7 @@ body{font-family:var(--sans);background:var(--cream);color:var(--dark);min-heigh
 .sync-dot{width:7px;height:7px;border-radius:50%;background:var(--green)}
 .sync-dot.syncing{background:var(--accent);animation:pulse 1s infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}
+  #fav-modal-overlay.open{display:flex!important}
 @media(max-width:900px){
   .sidebar{display:none}
   .grid-4{grid-template-columns:1fr 1fr}
@@ -512,28 +513,16 @@ function slideTo(id,idx,total){sliderIdx[id]=idx;const t=document.getElementById
 function toggleFav(id,btn,l){
   event.stopPropagation();
   const card=btn.closest('.listing-card');
-  const alreadyFaved=card.classList.contains('favorited');
-  if(alreadyFaved){card.classList.remove('favorited');btn.innerHTML='&#9825;';btn.style.color='';return;}
+  if(card.classList.contains('favorited')){card.classList.remove('favorited');btn.innerHTML='&#9825;';btn.style.color='';return;}
   card.classList.add('favorited');btn.innerHTML='&#9829;';btn.style.color='var(--accent-dark)';
-  document.getElementById('fav-modal-overlay').classList.add('open');
-  document.getElementById('fav-property-info').textContent=`${l.type} · ${l.neighborhood} · $${l.price.toLocaleString()}/mo`;
-  document.getElementById('fav-submit').onclick=function(){
-    const name=document.getElementById('fav-name').value.trim();
-    const phone=document.getElementById('fav-phone').value.trim();
-    const email=document.getElementById('fav-email').value.trim();
-    if(!name||!phone||!email){alert('Please fill in all fields.');return;}
-    emailjs.send('service_jszrjo7','template_5su3e0c',{
-      client_name:name,client_phone:phone,client_email:email,
-      neighborhood:l.neighborhood,property_type:l.type,
-      price:'$'+l.price.toLocaleString(),amenities:l.amenities
-    }).then(()=>{
-      document.getElementById('fav-modal-overlay').classList.remove('open');
-      document.getElementById('fav-name').value='';
-      document.getElementById('fav-phone').value='';
-      document.getElementById('fav-email').value='';
-      alert('Thanks! Your agent has been notified.');
-    }).catch(()=>alert('Something went wrong. Please try again.'));
-  };
+  if(!l)return;
+  const name=prompt('Enter your name so your agent knows who favorited this:');
+  if(!name)return;
+  emailjs.send('service_jszrjo7','template_5su3e0c',{
+    client_name:name,client_phone:'—',client_email:'—',
+    neighborhood:l.neighborhood,property_type:l.type,
+    price:'$'+l.price.toLocaleString(),amenities:l.amenities
+  }).then(()=>alert('Your agent has been notified!')).catch(()=>alert('Something went wrong.'));
 }
 function renderClientView(){
   const typeF=document.getElementById('client-type-filter').value;
@@ -552,9 +541,9 @@ function renderClientView(){
   if(selectedHoodBoxes.length>0&&selectedHoodBoxes.length<hoods.length)listings=listings.filter(l=>selectedHoodBoxes.includes(l.neighborhood));
   if(priceF){const[min,max]=priceF.split('-').map(Number);listings=listings.filter(l=>l.price>=min&&l.price<=max)}
   const content=document.getElementById('client-content');
-  if(!listings.length){window._listings={};content.innerHTML='<div class="no-results">No listings match your current filters.</div>';return}
+  window._listings={};if(!listings.length){content.innerHTML='<div class="no-results">No listings match your current filters.</div>';return}
   const byHood={};listings.forEach(l=>{if(!byHood[l.neighborhood])byHood[l.neighborhood]=[];byHood[l.neighborhood].push(l)});
-  content.innerHTML=Object.keys(byHood).sort().map(hood=>`<div class="client-hood-section"><div class="client-hood-header"><div class="client-hood-title">${hood}</div><div class="client-hood-count">${byHood[hood].length} listing${byHood[hood].length!==1?'s':''}</div></div><div class="client-grid">${byHood[hood].map((l,i)=>{const cardId=`${l.cid}-${l.type.replace(/\s/g,'')}-${i}`;const cardId=`${l.cid}-${l.type.replace(/\s/g,'')}-${i}`;
+  content.innerHTML=Object.keys(byHood).sort().map(hood=>`<div class="client-hood-section"><div class="client-hood-header"><div class="client-hood-title">${hood}</div><div class="client-hood-count">${byHood[hood].length} listing${byHood[hood].length!==1?'s':''}</div></div><div class="client-grid">${byHood[hood].map((l,i)=>{const cardId=`${l.cid}-${l.type.replace(/\s/g,'')}-${i}`;
 window._listings[cardId]=l;return`<div class="listing-card" id="lcard-${cardId}" onclick="openListingModal(${JSON.stringify(l).replace(/"/g,'&quot;')})">${makeSlider(l.images,l.neighborhood,cardId,l.special)}<div class="listing-body"><div class="listing-unit-type">${l.type} &middot; ${l.available} available</div><div class="listing-price">$${l.price.toLocaleString()}<span>/month</span></div><div class="listing-amenities">${l.amenities.split(',').map(a=>`<span class="amenity-tag">${a.trim()}</span>`).join('')}</div></div><div class="listing-footer"><span>${l.neighborhood}, Miami FL</span><span>Contact agent</span></div></div>`;}).join('')}</div></div>`).join('');
 }
 function renderClients(){
