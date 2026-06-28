@@ -6,6 +6,8 @@
   <link rel="icon" type="image/png" href="https://images.squarespace-cdn.com/content/v1/65b9e9096f0cc81ac089a996/14e775a0-54c6-4a51-bcdd-2f07bc949cc6/Artboard+15.png?format=100w">
 <title>Maison Locators — Agent Portal</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+<script>emailjs.init('YMenUGwC36orhXAZB');</script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -501,13 +503,38 @@ async function saveEditPanel(){
 }
 function closeEditPanel(){document.getElementById('edit-panel').classList.remove('open');document.getElementById('overlay').classList.remove('open');editingId=null}
 const sliderIdx={};
-function makeSlider(images,neighborhood,cardId,special){
+function makeSlider(images,neighborhood,cardId,special,listing){
   const imgs=images&&images.length>0?images:[];
-  return`<div class="slider-wrap" id="slider-${cardId}"><div class="neighborhood-tag">${neighborhood}</div><div class="slider-track" id="track-${cardId}">${imgs.length>0?imgs.map(url=>`<div class="slide"><img src="${url}" alt="" onerror="this.parentElement.innerHTML='<div class=slide-placeholder>M</div>'"></div>`).join(''):'<div class="slide"><div class="slide-placeholder">M</div></div>'}</div>${imgs.length>1?`<button class="slider-btn slider-prev" onclick="slideMove('${cardId}',-1,${imgs.length});event.stopPropagation()">&#8249;</button><button class="slider-btn slider-next" onclick="slideMove('${cardId}',1,${imgs.length});event.stopPropagation()">&#8250;</button><div class="slider-dots" id="dots-${cardId}">${imgs.map((_,i)=>`<div class="slider-dot ${i===0?'active':''}" onclick="slideTo('${cardId}',${i},${imgs.length});event.stopPropagation()"></div>`).join('')}</div><div class="slider-img-count" id="count-${cardId}">1 / ${imgs.length}</div>`:''}${special?`<div class="special-sticker">${special}</div>`:''}<button class="fav-btn" id="fav-${cardId}" onclick="toggleFav('${cardId}',this);event.stopPropagation()">&#9825;</button></div>`;
+  return`<div class="slider-wrap" id="slider-${cardId}"><div class="neighborhood-tag">${neighborhood}</div><div class="slider-track" id="track-${cardId}">${imgs.length>0?imgs.map(url=>`<div class="slide"><img src="${url}" alt="" onerror="this.parentElement.innerHTML='<div class=slide-placeholder>M</div>'"></div>`).join(''):'<div class="slide"><div class="slide-placeholder">M</div></div>'}</div>${imgs.length>1?`<button class="slider-btn slider-prev" onclick="slideMove('${cardId}',-1,${imgs.length});event.stopPropagation()">&#8249;</button><button class="slider-btn slider-next" onclick="slideMove('${cardId}',1,${imgs.length});event.stopPropagation()">&#8250;</button><div class="slider-dots" id="dots-${cardId}">${imgs.map((_,i)=>`<div class="slider-dot ${i===0?'active':''}" onclick="slideTo('${cardId}',${i},${imgs.length});event.stopPropagation()"></div>`).join('')}</div><div class="slider-img-count" id="count-${cardId}">1 / ${imgs.length}</div>`:''}${special?`<div class="special-sticker">${special}</div>`:''}<button class="fav-btn" id="fav-${cardId}" onclick="event.stopPropagation();toggleFav('${cardId}',this,window._listings&&window._listings['${cardId}'])">&#9825;</button></div>`;
 }
 function slideMove(id,dir,total){sliderIdx[id]=((sliderIdx[id]||0)+dir+total)%total;slideTo(id,sliderIdx[id],total)}
 function slideTo(id,idx,total){sliderIdx[id]=idx;const t=document.getElementById('track-'+id);if(t)t.style.transform=`translateX(-${idx*100}%)`;const d=document.getElementById('dots-'+id);if(d)[...d.children].forEach((x,i)=>x.classList.toggle('active',i===idx));const c=document.getElementById('count-'+id);if(c)c.textContent=`${idx+1} / ${total}`}
-function toggleFav(id,btn){const card=btn.closest('.listing-card');card.classList.toggle('favorited');btn.innerHTML=card.classList.contains('favorited')?'&#9829;':'&#9825;';btn.style.color=card.classList.contains('favorited')?'var(--accent-dark)':''}
+function toggleFav(id,btn,l){
+  event.stopPropagation();
+  const card=btn.closest('.listing-card');
+  const alreadyFaved=card.classList.contains('favorited');
+  if(alreadyFaved){card.classList.remove('favorited');btn.innerHTML='&#9825;';btn.style.color='';return;}
+  card.classList.add('favorited');btn.innerHTML='&#9829;';btn.style.color='var(--accent-dark)';
+  document.getElementById('fav-modal-overlay').classList.add('open');
+  document.getElementById('fav-property-info').textContent=`${l.type} · ${l.neighborhood} · $${l.price.toLocaleString()}/mo`;
+  document.getElementById('fav-submit').onclick=function(){
+    const name=document.getElementById('fav-name').value.trim();
+    const phone=document.getElementById('fav-phone').value.trim();
+    const email=document.getElementById('fav-email').value.trim();
+    if(!name||!phone||!email){alert('Please fill in all fields.');return;}
+    emailjs.send('service_jszrjo7','template_5su3e0c',{
+      client_name:name,client_phone:phone,client_email:email,
+      neighborhood:l.neighborhood,property_type:l.type,
+      price:'$'+l.price.toLocaleString(),amenities:l.amenities
+    }).then(()=>{
+      document.getElementById('fav-modal-overlay').classList.remove('open');
+      document.getElementById('fav-name').value='';
+      document.getElementById('fav-phone').value='';
+      document.getElementById('fav-email').value='';
+      alert('Thanks! Your agent has been notified.');
+    }).catch(()=>alert('Something went wrong. Please try again.'));
+  };
+}
 function renderClientView(){
   const typeF=document.getElementById('client-type-filter').value;
   const priceF=document.getElementById('client-price-filter').value;
@@ -525,9 +552,10 @@ function renderClientView(){
   if(selectedHoodBoxes.length>0&&selectedHoodBoxes.length<hoods.length)listings=listings.filter(l=>selectedHoodBoxes.includes(l.neighborhood));
   if(priceF){const[min,max]=priceF.split('-').map(Number);listings=listings.filter(l=>l.price>=min&&l.price<=max)}
   const content=document.getElementById('client-content');
-  if(!listings.length){content.innerHTML='<div class="no-results">No listings match your current filters.</div>';return}
+  if(!listings.length){window._listings={};content.innerHTML='<div class="no-results">No listings match your current filters.</div>';return}
   const byHood={};listings.forEach(l=>{if(!byHood[l.neighborhood])byHood[l.neighborhood]=[];byHood[l.neighborhood].push(l)});
-  content.innerHTML=Object.keys(byHood).sort().map(hood=>`<div class="client-hood-section"><div class="client-hood-header"><div class="client-hood-title">${hood}</div><div class="client-hood-count">${byHood[hood].length} listing${byHood[hood].length!==1?'s':''}</div></div><div class="client-grid">${byHood[hood].map((l,i)=>{const cardId=`${l.cid}-${l.type.replace(/\s/g,'')}-${i}`;return`<div class="listing-card" id="lcard-${cardId}" onclick="openListingModal(${JSON.stringify(l).replace(/"/g,'&quot;')})">${makeSlider(l.images,l.neighborhood,cardId,l.special)}<div class="listing-body"><div class="listing-unit-type">${l.type} &middot; ${l.available} available</div><div class="listing-price">$${l.price.toLocaleString()}<span>/month</span></div><div class="listing-amenities">${l.amenities.split(',').map(a=>`<span class="amenity-tag">${a.trim()}</span>`).join('')}</div></div><div class="listing-footer"><span>${l.neighborhood}, Miami FL</span><span>Contact agent</span></div></div>`;}).join('')}</div></div>`).join('');
+  content.innerHTML=Object.keys(byHood).sort().map(hood=>`<div class="client-hood-section"><div class="client-hood-header"><div class="client-hood-title">${hood}</div><div class="client-hood-count">${byHood[hood].length} listing${byHood[hood].length!==1?'s':''}</div></div><div class="client-grid">${byHood[hood].map((l,i)=>{const cardId=`${l.cid}-${l.type.replace(/\s/g,'')}-${i}`;const cardId=`${l.cid}-${l.type.replace(/\s/g,'')}-${i}`;
+window._listings[cardId]=l;return`<div class="listing-card" id="lcard-${cardId}" onclick="openListingModal(${JSON.stringify(l).replace(/"/g,'&quot;')})">${makeSlider(l.images,l.neighborhood,cardId,l.special)}<div class="listing-body"><div class="listing-unit-type">${l.type} &middot; ${l.available} available</div><div class="listing-price">$${l.price.toLocaleString()}<span>/month</span></div><div class="listing-amenities">${l.amenities.split(',').map(a=>`<span class="amenity-tag">${a.trim()}</span>`).join('')}</div></div><div class="listing-footer"><span>${l.neighborhood}, Miami FL</span><span>Contact agent</span></div></div>`;}).join('')}</div></div>`).join('');
 }
 function renderClients(){
   const hoods=getNeighborhoods();
@@ -590,5 +618,16 @@ function closeListingModal(e){
 }
 init();
 </script>
+  <div id="fav-modal-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:300;align-items:flex-end;justify-content:center" onclick="if(event.target===this)this.classList.remove('open')">
+  <div style="background:var(--white);width:100%;max-width:500px;border-radius:16px 16px 0 0;padding:28px 24px 36px">
+    <p style="font-family:var(--serif);font-size:20px;margin-bottom:6px">You favorited a property ♥</p>
+    <p id="fav-property-info" style="font-size:12px;color:var(--muted);margin-bottom:20px"></p>
+    <input id="fav-name" placeholder="Your name" style="width:100%;padding:10px 12px;border:1px solid var(--border);font-family:var(--sans);font-size:13px;margin-bottom:10px;outline:none"><br>
+    <input id="fav-phone" placeholder="Your phone number" style="width:100%;padding:10px 12px;border:1px solid var(--border);font-family:var(--sans);font-size:13px;margin-bottom:10px;outline:none"><br>
+    <input id="fav-email" placeholder="Your email" style="width:100%;padding:10px 12px;border:1px solid var(--border);font-family:var(--sans);font-size:13px;margin-bottom:16px;outline:none"><br>
+    <button id="fav-submit" style="width:100%;padding:12px;background:var(--black);color:var(--white);border:none;font-family:var(--sans);font-size:11px;letter-spacing:0.12em;text-transform:uppercase;cursor:pointer">Notify My Agent</button>
+    <button onclick="document.getElementById('fav-modal-overlay').classList.remove('open')" style="width:100%;padding:10px;background:none;border:none;font-family:var(--sans);font-size:11px;color:var(--muted);cursor:pointer;margin-top:8px">Cancel</button>
+  </div>
+</div>
 </body>
 </html>
