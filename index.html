@@ -542,7 +542,7 @@ function renderClientView(){
   if(priceF){const[min,max]=priceF.split('-').map(Number);listings=listings.filter(l=>l.price>=min&&l.price<=max)}
   const content=document.getElementById('client-content');
   window._listings={};if(!listings.length){content.innerHTML='<div class="no-results">No listings match your current filters.</div>';return}
-  const byHood={};listings.forEach(l=>{if(!byHood[l.neighborhood])byHood[l.neighborhood]=[];byHood[l.neighborhood].push(l)});
+  window._listings={};const byHood={};listings.forEach(l=>{if(!byHood[l.neighborhood])byHood[l.neighborhood]=[];byHood[l.neighborhood].push(l)});
   content.innerHTML=Object.keys(byHood).sort().map(hood=>`<div class="client-hood-section"><div class="client-hood-header"><div class="client-hood-title">${hood}</div><div class="client-hood-count">${byHood[hood].length} listing${byHood[hood].length!==1?'s':''}</div></div><div class="client-grid">${byHood[hood].map((l,i)=>{const cardId=`${l.cid}-${l.type.replace(/\s/g,'')}-${i}`;
 window._listings[cardId]=l;return`<div class="listing-card" id="lcard-${cardId}" onclick="openListingModal(${JSON.stringify(l).replace(/"/g,'&quot;')})">${makeSlider(l.images,l.neighborhood,cardId,l.special)}<div class="listing-body"><div class="listing-unit-type">${l.type} &middot; ${l.available} available</div><div class="listing-price">$${l.price.toLocaleString()}<span>/month</span></div><div class="listing-amenities">${l.amenities.split(',').map(a=>`<span class="amenity-tag">${a.trim()}</span>`).join('')}</div></div><div class="listing-footer"><span>${l.neighborhood}, Miami FL</span><span>Contact agent</span></div></div>`;}).join('')}</div></div>`).join('');
 }
