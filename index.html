@@ -436,7 +436,13 @@ let clients=[];
 let editingId=null;
 function getNeighborhoods(){return[...new Set(communities.map(c=>c.neighborhood))].sort()}
 function commissionLabel(val){if(!val)return'';if(val==='1month')return'Commission: 1 Month';if(val.startsWith('flat:'))return'Commission: $'+Number(val.split(':')[1]).toLocaleString();return'';}
-async function init(){
+window.addEventListener('load',function(){
+  if(!sessionStorage.getItem('ml_client_authed')&&!sessionStorage.getItem('ml_authed')){
+    pendingView='preview';
+    gate.style.display='flex';
+    setTimeout(()=>document.getElementById('pw-input').focus(),100);
+  }
+});
   document.getElementById('communities-by-hood').innerHTML='<div class="loading"><div class="spinner"></div>Loading from database...</div>';
   let dbComms=await sbGet('communities');
   if(!Array.isArray(dbComms)||dbComms.length===0){await sbUpsert('communities',DEFAULT_COMMUNITIES);dbComms=DEFAULT_COMMUNITIES;}
