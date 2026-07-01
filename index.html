@@ -516,19 +516,26 @@ function toggleFav(id,btn,l){
   if(card.classList.contains('favorited')){card.classList.remove('favorited');btn.innerHTML='&#9825;';btn.style.color='';return;}
   card.classList.add('favorited');btn.innerHTML='&#9829;';btn.style.color='var(--accent-dark)';
   if(!l)return;
-  const name=prompt('Your name:');
-  if(!name)return;
-  const phone=prompt('Your phone number:');
-  if(!phone)return;
-  const email=prompt('Your email:');
-  if(!email)return;
-  emailjs.send('service_jszrjo7','template_5su3e0c',{
-    client_name:name,client_phone:phone,client_email:email,
-    neighborhood:l.neighborhood,property_type:l.type,
-    price:'$'+l.price.toLocaleString(),amenities:l.amenities
-  }).then(()=>alert('Your agent has been notified!')).catch(()=>alert('Something went wrong.'));
-}
-function renderClientView(){
+  document.getElementById('fav-property-info').textContent=`${l.type} · ${l.neighborhood} · $${l.price.toLocaleString()}/mo`;
+  document.getElementById('fav-modal-overlay').style.display='flex';
+  document.getElementById('fav-submit').onclick=function(){
+    const name=document.getElementById('fav-name').value.trim();
+    const phone=document.getElementById('fav-phone').value.trim();
+    const email=document.getElementById('fav-email').value.trim();
+    if(!name||!phone||!email){alert('Please fill in all fields.');return;}
+    emailjs.send('service_jszrjo7','template_5su3e0c',{
+      client_name:name,client_phone:phone,client_email:email,
+      neighborhood:l.neighborhood,property_type:l.type,
+      price:'$'+l.price.toLocaleString(),amenities:l.amenities
+    }).then(()=>{
+      document.getElementById('fav-modal-overlay').style.display='none';
+      document.getElementById('fav-name').value='';
+      document.getElementById('fav-phone').value='';
+      document.getElementById('fav-email').value='';
+      alert('Your agent has been notified!');
+    }).catch(()=>alert('Something went wrong.'));
+  };
+}function renderClientView(){
   const typeF=document.getElementById('client-type-filter').value;
   const priceF=document.getElementById('client-price-filter').value;
   const clientIdx=document.getElementById('preview-client-select').value;
@@ -611,15 +618,31 @@ function closeListingModal(e){
 }
 init();
 </script>
-  <div id="fav-modal-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:300;align-items:flex-end;justify-content:center" onclick="if(event.target===this)this.style.display='none'">
-  <div style="background:var(--white);width:100%;max-width:500px;border-radius:16px 16px 0 0;padding:28px 24px 36px">
-    <p style="font-family:var(--serif);font-size:20px;margin-bottom:6px">You favorited a property ♥</p>
-    <p id="fav-property-info" style="font-size:12px;color:var(--muted);margin-bottom:20px"></p>
-    <input id="fav-name" placeholder="Your name" style="width:100%;padding:10px 12px;border:1px solid var(--border);font-family:var(--sans);font-size:13px;margin-bottom:10px;outline:none"><br>
-    <input id="fav-phone" placeholder="Your phone number" style="width:100%;padding:10px 12px;border:1px solid var(--border);font-family:var(--sans);font-size:13px;margin-bottom:10px;outline:none"><br>
-    <input id="fav-email" placeholder="Your email" style="width:100%;padding:10px 12px;border:1px solid var(--border);font-family:var(--sans);font-size:13px;margin-bottom:16px;outline:none"><br>
-    <button id="fav-submit" style="width:100%;padding:12px;background:var(--black);color:var(--white);border:none;font-family:var(--sans);font-size:11px;letter-spacing:0.12em;text-transform:uppercase;cursor:pointer">Notify My Agent</button>
-    <button onclick="document.getElementById('fav-modal-overlay').style.display='none'" style="width:100%;padding:10px;background:none;border:none;font-family:var(--sans);font-size:11px;color:var(--muted);cursor:pointer;margin-top:8px">Cancel</button>
+<div id="fav-modal-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:300;align-items:flex-end;justify-content:center" onclick="if(event.target===this)this.style.display='none'">
+  <div style="background:var(--white);width:100%;max-width:500px;border-radius:24px 24px 0 0;padding:0 0 40px;overflow:hidden">
+    <!-- Gold banner -->
+    <div style="background:linear-gradient(135deg,#B89B72,#8A7050);padding:22px 24px 18px;text-align:center">
+      <div style="font-size:28px;margin-bottom:6px">📸❤️</div>
+      <p style="font-family:'Playfair Display',Georgia,serif;font-size:20px;color:#fff;font-weight:400;margin-bottom:4px">Screenshot this property!</p>
+      <p style="font-size:11px;color:rgba(255,255,255,0.85);letter-spacing:0.06em">Share it with your agent to tour ASAP</p>
+    </div>
+    <!-- Info strip -->
+    <div style="background:#F7F4EF;padding:12px 24px;border-bottom:1px solid #D8D2C8">
+      <p id="fav-property-info" style="font-size:12px;color:#5C5C5C;text-align:center;font-weight:400"></p>
+    </div>
+    <!-- Value prop -->
+    <div style="padding:16px 24px 14px;text-align:center;border-bottom:1px solid #EDE8DF">
+      <p style="font-size:12px;color:#5C5C5C;line-height:1.7">🏠 If you tour with your agent, we can secure the best possible deal.<br><strong style="color:#1C1C1C;font-weight:500">We are paid by the building — at no extra cost to you!</strong></p>
+    </div>
+    <!-- Form -->
+    <div style="padding:20px 24px 0">
+      <p style="font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:#8A8A8A;margin-bottom:14px;text-align:center">Notify your agent now</p>
+      <input id="fav-name" placeholder="Your full name" style="width:100%;padding:12px 14px;border:1px solid #D8D2C8;font-family:'Jost',sans-serif;font-size:14px;margin-bottom:10px;outline:none;border-radius:4px"><br>
+      <input id="fav-phone" placeholder="Your phone number" type="tel" style="width:100%;padding:12px 14px;border:1px solid #D8D2C8;font-family:'Jost',sans-serif;font-size:14px;margin-bottom:10px;outline:none;border-radius:4px"><br>
+      <input id="fav-email" placeholder="Your email address" type="email" style="width:100%;padding:12px 14px;border:1px solid #D8D2C8;font-family:'Jost',sans-serif;font-size:14px;margin-bottom:16px;outline:none;border-radius:4px"><br>
+      <button id="fav-submit" style="width:100%;padding:14px;background:#111111;color:#fff;border:none;font-family:'Jost',sans-serif;font-size:12px;letter-spacing:0.14em;text-transform:uppercase;cursor:pointer;border-radius:4px">❤️ Notify My Agent</button>
+      <button onclick="document.getElementById('fav-modal-overlay').style.display='none'" style="width:100%;padding:12px;background:none;border:none;font-family:'Jost',sans-serif;font-size:12px;color:#8A8A8A;cursor:pointer;margin-top:6px">Not now</button>
+    </div>
   </div>
 </div>
 </body>
