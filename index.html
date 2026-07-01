@@ -381,13 +381,14 @@ async function sbUpsert(table,data){setSyncing(true);const rows=Array.isArray(da
 async function sbDelete(table,id){setSyncing(true);const r=await fetch(`${SUPABASE_URL}/rest/v1/${table}?id=eq.${id}`,{method:'DELETE',headers:HEADERS});setSyncing(false);return r}
 function setSyncing(on){const dot=document.getElementById('sync-dot');const lbl=document.getElementById('sync-label');if(!dot)return;if(on){dot.className='sync-dot syncing';lbl.textContent='Saving...';}else{dot.className='sync-dot';lbl.textContent='Synced';}}
 const AGENT_PASSWORD='maison2025';
+const CLIENT_PASSWORD='ilovemaison';
 let pendingView=null;
 const gate=document.createElement('div');
 gate.id='password-gate';
 gate.style.cssText='display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:200;align-items:center;justify-content:center';
 gate.innerHTML=`<div style="background:var(--white);padding:36px;width:320px"><p style="font-family:var(--serif);font-size:20px;margin-bottom:16px;color:var(--dark)">Agent Access</p><input id="pw-input" type="password" placeholder="Enter password" style="width:100%;padding:10px 12px;border:1px solid var(--border);font-family:var(--sans);font-size:13px;outline:none;margin-bottom:10px" onkeydown="if(event.key==='Enter')submitPw()"><p id="pw-error" style="color:var(--red);font-size:11px;margin-bottom:10px;display:none">Incorrect password</p><button onclick="submitPw()" style="width:100%;padding:10px;background:var(--black);color:var(--white);border:none;font-family:var(--sans);font-size:11px;letter-spacing:0.12em;text-transform:uppercase;cursor:pointer">Enter</button></div>`;
 document.body.appendChild(gate);
-function submitPw(){const val=document.getElementById('pw-input').value;if(val===AGENT_PASSWORD){sessionStorage.setItem('ml_authed','1');gate.style.display='none';document.getElementById('pw-input').value='';document.getElementById('pw-error').style.display='none';if(pendingView){const v=pendingView;pendingView=null;showView(v);}}else{document.getElementById('pw-error').style.display='block';}}
+function submitPw(){const val=document.getElementById('pw-input').value;if(val===AGENT_PASSWORD){sessionStorage.setItem('ml_authed','1');gate.style.display='none';document.getElementById('pw-input').value='';document.getElementById('pw-error').style.display='none';if(pendingView){const v=pendingView;pendingView=null;showView(v);}}else if(val===CLIENT_PASSWORD){sessionStorage.setItem('ml_client_authed','1');gate.style.display='none';document.getElementById('pw-input').value='';document.getElementById('pw-error').style.display='none';if(pendingView){const v=pendingView;pendingView=null;showView(v);}}else{document.getElementById('pw-error').style.display='block';}}
 const DEFAULT_COMMUNITIES=[
   {id:1,name:"Palm Gardens @ Biscayne Gardens",neighborhood:"North Miami",url:"https://www.biscaynegardensliving.com/",active:true,amenities:"Pool, Gym, Pet-friendly",commission:"",units:[],images:[]},
   {id:2,name:"Amara Wynwood",neighborhood:"Wynwood",url:"https://www.amarawynwood.com/",active:true,amenities:"Rooftop Pool, Gym, Co-working",commission:"",units:[],images:[]},
@@ -445,8 +446,10 @@ async function init(){
   renderDashboard();renderCommunities();renderClients();renderClientView();applySofiaParams();
 }
 function showView(name){
-  const protected_=['dashboard','communities','preview'];
+  const protected_=['dashboard','communities'];
+const client_protected_=['preview'];
   if(protected_.includes(name)&&!sessionStorage.getItem('ml_authed')){pendingView=name;gate.style.display='flex';setTimeout(()=>document.getElementById('pw-input').focus(),100);return;}
+if(client_protected_.includes(name)&&!sessionStorage.getItem('ml_client_authed')&&!sessionStorage.getItem('ml_authed')){pendingView=name;gate.style.display='flex';setTimeout(()=>document.getElementById('pw-input').focus(),100);return;}
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
   document.querySelectorAll('.sidebar-nav-item').forEach(n=>n.classList.remove('active'));
   document.getElementById('view-'+name).classList.add('active');
