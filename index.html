@@ -445,7 +445,7 @@ async function init(){
   renderDashboard();renderCommunities();renderClients();renderClientView();applySofiaParams();
 }
 function showView(name){
-  const protected_=['dashboard','communities'];
+  const protected_=['dashboard','communities','preview'];
   if(protected_.includes(name)&&!sessionStorage.getItem('ml_authed')){pendingView=name;gate.style.display='flex';setTimeout(()=>document.getElementById('pw-input').focus(),100);return;}
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
   document.querySelectorAll('.sidebar-nav-item').forEach(n=>n.classList.remove('active'));
