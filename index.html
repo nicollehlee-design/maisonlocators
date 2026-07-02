@@ -412,7 +412,7 @@ function submitPw(){
     document.getElementById('pw-error').style.display='block';
   }
 }
-function toggleAllHoods(check){document.querySelectorAll('#client-hood-filter-wrap input[type=checkbox]').forEach(cb=>cb.checked=check);renderClientView();}
+window.toggleAllHoods=function(check){document.querySelectorAll('#client-hood-filter-wrap input[type=checkbox]').forEach(cb=>cb.checked=check);renderClientView();};
   const DEFAULT_COMMUNITIES=[
   {id:1,name:"Palm Gardens @ Biscayne Gardens",neighborhood:"North Miami",url:"https://www.biscaynegardensliving.com/",active:true,amenities:"Pool, Gym, Pet-friendly",commission:"",units:[],images:[]},
   {id:2,name:"Amara Wynwood",neighborhood:"Wynwood",url:"https://www.amarawynwood.com/",active:true,amenities:"Rooftop Pool, Gym, Co-working",commission:"",units:[],images:[]},
@@ -550,13 +550,14 @@ function renderClientView(){
   let listings=[];
   communities.filter(c=>c.active&&selectedHoods.includes(c.neighborhood)).forEach(c=>{(c.units||[]).forEach(u=>listings.push({cid:c.id,neighborhood:c.neighborhood,amenities:c.amenities,images:c.images||[],special:c.special||'',...u}))});
   if(typeF)listings=listings.filter(l=>l.type===typeF);
-  const selectedHoodBoxes=[...document.querySelectorAll('#client-hood-filter-wrap input:checked')].map(i=>i.value);
-  if(selectedHoodBoxes.length>0&&selectedHoodBoxes.length<hoods.length)listings=listings.filter(l=>selectedHoodBoxes.includes(l.neighborhood));
+  const allBoxes=[...document.querySelectorAll('#client-hood-filter-wrap input[type=checkbox]')];
+const selectedHoodBoxes=allBoxes.filter(i=>i.checked).map(i=>i.value);
+if(allBoxes.length>0&&selectedHoodBoxes.length>0&&selectedHoodBoxes.length<hoods.length)listings=listings.filter(l=>selectedHoodBoxes.includes(l.neighborhood));
   if(priceF){const[min,max]=priceF.split('-').map(Number);listings=listings.filter(l=>l.price>=min&&l.price<=max)}
-  const sortF=document.getElementById('client-price-sort').value;
+  const content=document.getElementById('client-content');
+  const sortF=document.getElementById('client-price-sort')?document.getElementById('client-price-sort').value:'';
 if(sortF==='low')listings.sort((a,b)=>a.price-b.price);
 if(sortF==='high')listings.sort((a,b)=>b.price-a.price);
-  const content=document.getElementById('client-content');
   window._listings={};
   if(!listings.length){content.innerHTML='<div class="no-results">No listings match your current filters.</div>';return}
   const byHood={};listings.forEach(l=>{if(!byHood[l.neighborhood])byHood[l.neighborhood]=[];byHood[l.neighborhood].push(l)});
