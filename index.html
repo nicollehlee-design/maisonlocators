@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="icon" type="image/png" href="https://images.squarespace-cdn.com/content/v1/65b9e9096f0cc81ac089a996/14e775a0-54c6-4a51-bcdd-2f07bc949cc6/Artboard+15.png?format=100w">
-<title>Maison Locators — Apartment Portal</title>
+<title>Maison Locators — Agent Portal</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -238,7 +238,7 @@ body{font-family:var(--sans);background:var(--cream);color:var(--dark);min-heigh
       <div class="sidebar-nav-item" onclick="showView('clients')">Client Links</div>
       <div class="sidebar-nav-item active" onclick="showView('preview')">Client Preview</div>
     </div>
-    <div class="sidebar-bottom"><p>Maison Locators &copy; 2026<br>Miami, FL<br>Agent use only</p></div>
+    <div class="sidebar-bottom"><p>Maison Locators &copy; 2025<br>Miami, FL<br>Agent use only</p></div>
   </aside>
   <main class="main">
     <div id="view-dashboard" class="view">
@@ -250,7 +250,7 @@ body{font-family:var(--sans);background:var(--cream);color:var(--dark);min-heigh
         </div>
       </div>
       <div class="content-pad">
-        <p class="section-sub">Portfolio overview</p>
+        <p class="section-sub">Portfolio overview — agent use only</p>
         <div class="grid-4" id="dashboard-stats"></div>
         <div class="section-title" style="margin-bottom:16px">Communities with Pricing</div>
         <div id="dashboard-recent"></div>
@@ -320,6 +320,7 @@ body{font-family:var(--sans);background:var(--cream);color:var(--dark);min-heigh
       <div class="client-header">
         <img src="https://images.squarespace-cdn.com/content/v1/65b9e9096f0cc81ac089a996/14e775a0-54c6-4a51-bcdd-2f07bc949cc6/Artboard+15.png?format=300w" alt="Maison Locators">
         <h2>Available Residences</h2>
+        <p>Miami, FL</p>
       </div>
       <div class="client-filters">
         <select class="filter-select" id="client-type-filter" onchange="renderClientView()">
@@ -389,7 +390,7 @@ let pendingView=null;
 const gate=document.createElement('div');
 gate.id='password-gate';
 gate.style.cssText='display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:200;align-items:center;justify-content:center';
-gate.innerHTML=`<div style="background:var(--white);padding:36px;width:320px"><p style="font-family:var(--serif);font-size:20px;margin-bottom:16px;color:var(--dark)">Access</p><input id="pw-input" type="password" placeholder="Enter password" style="width:100%;padding:10px 12px;border:1px solid var(--border);font-family:var(--sans);font-size:13px;outline:none;margin-bottom:10px" onkeydown="if(event.key==='Enter')submitPw()"><p id="pw-error" style="color:var(--red);font-size:11px;margin-bottom:10px;display:none">Incorrect password</p><button onclick="submitPw()" style="width:100%;padding:10px;background:var(--black);color:var(--white);border:none;font-family:var(--sans);font-size:11px;letter-spacing:0.12em;text-transform:uppercase;cursor:pointer">Enter</button></div>`;
+gate.innerHTML=`<div style="background:var(--white);padding:36px;width:320px"><p style="font-family:var(--serif);font-size:20px;margin-bottom:16px;color:var(--dark)">Agent Access</p><input id="pw-input" type="password" placeholder="Enter password" style="width:100%;padding:10px 12px;border:1px solid var(--border);font-family:var(--sans);font-size:13px;outline:none;margin-bottom:10px" onkeydown="if(event.key==='Enter')submitPw()"><p id="pw-error" style="color:var(--red);font-size:11px;margin-bottom:10px;display:none">Incorrect password</p><button onclick="submitPw()" style="width:100%;padding:10px;background:var(--black);color:var(--white);border:none;font-family:var(--sans);font-size:11px;letter-spacing:0.12em;text-transform:uppercase;cursor:pointer">Enter</button></div>`;
 document.body.appendChild(gate);
 function submitPw(){
   const val=document.getElementById('pw-input').value;
@@ -545,40 +546,25 @@ function renderClientView(){
   const hoods=getNeighborhoods();
   const hoodWrap=document.getElementById('client-hood-filter-wrap');
   const checkedHoods=new Set([...document.querySelectorAll('#client-hood-filter-wrap input:checked')].map(i=>i.value));
-  const firstLoad=hoodWrap.children.length===0;
-  hoodWrap.innerHTML=`<button type="button" onclick="selectAllHoods();return false;" style="font-size:10px;letter-spacing:0.08em;text-transform:uppercase;background:var(--black);color:#fff;border:none;padding:5px 10px;cursor:pointer">Select All</button><button type="button" onclick="clearAllHoods();return false;" style="font-size:10px;letter-spacing:0.08em;text-transform:uppercase;background:transparent;color:var(--mid);border:1px solid var(--border);padding:5px 10px;cursor:pointer">Clear All</button>`+hoods.map(h=>`<label style="display:flex;align-items:center;gap:4px;font-size:11px;cursor:pointer;background:var(--cream);padding:5px 10px;border:1px solid var(--border);white-space:nowrap"><input type="checkbox" value="${h}" ${firstLoad||checkedHoods.has(h)?'checked':''} onchange="renderClientView()" style="accent-color:var(--accent-dark)"> ${h}</label>`).join('');
+  hoodWrap.innerHTML=`<button onclick="toggleAllHoods(true)" style="font-size:10px;letter-spacing:0.08em;text-transform:uppercase;background:var(--black);color:#fff;border:none;padding:5px 10px;cursor:pointer">Select All</button><button onclick="toggleAllHoods(false)" style="font-size:10px;letter-spacing:0.08em;text-transform:uppercase;background:transparent;color:var(--mid);border:1px solid var(--border);padding:5px 10px;cursor:pointer">Clear All</button>`+hoods.map(h=>`<label style="display:flex;align-items:center;gap:4px;font-size:11px;cursor:pointer;background:var(--cream);padding:5px 10px;border:1px solid var(--border);white-space:nowrap"><input type="checkbox" value="${h}" ${checkedHoods.has(h)||checkedHoods.size===0?'checked':''} onchange="renderClientView()" style="accent-color:var(--accent-dark)"> ${h}</label>`).join('');
   let selectedHoods=hoods;
   if(clientIdx!==''&&clients[parseInt(clientIdx)]){selectedHoods=clients[parseInt(clientIdx)].neighborhoods||hoods}
   let listings=[];
   communities.filter(c=>c.active&&selectedHoods.includes(c.neighborhood)).forEach(c=>{(c.units||[]).forEach(u=>listings.push({cid:c.id,neighborhood:c.neighborhood,amenities:c.amenities,images:c.images||[],special:c.special||'',...u}))});
   if(typeF)listings=listings.filter(l=>l.type===typeF);
   const allBoxes=[...document.querySelectorAll('#client-hood-filter-wrap input[type=checkbox]')];
-  const selectedHoodBoxes=allBoxes.filter(i=>i.checked).map(i=>i.value);
-  if(allBoxes.length===hoods.length&&selectedHoodBoxes.length>0&&selectedHoodBoxes.length<hoods.length){listings=listings.filter(l=>selectedHoodBoxes.includes(l.neighborhood))}
+const selectedHoodBoxes=allBoxes.filter(i=>i.checked).map(i=>i.value);
+if(allBoxes.length===hoods.length&&selectedHoodBoxes.length>0&&selectedHoodBoxes.length<hoods.length){listings=listings.filter(l=>selectedHoodBoxes.includes(l.neighborhood))}
   if(priceF){const[min,max]=priceF.split('-').map(Number);listings=listings.filter(l=>l.price>=min&&l.price<=max)}
-  const sortF=document.getElementById('client-price-sort')?document.getElementById('client-price-sort').value:'';
-  if(sortF==='low')listings.sort((a,b)=>a.price-b.price);
-  if(sortF==='high')listings.sort((a,b)=>b.price-a.price);
   const content=document.getElementById('client-content');
+  const sortF=document.getElementById('client-price-sort')?document.getElementById('client-price-sort').value:'';
+if(sortF==='low')listings.sort((a,b)=>a.price-b.price);
+if(sortF==='high')listings.sort((a,b)=>b.price-a.price);
   window._listings={};
   if(!listings.length){content.innerHTML='<div class="no-results">No listings match your current filters.</div>';return}
-  if(sortF){
-    content.innerHTML=`<div class="client-grid">${listings.map((l,i)=>{const cardId=`${l.cid}-${l.type.replace(/\s/g,'')}-${i}`;window._listings[cardId]=l;return`<div class="listing-card" id="lcard-${cardId}" onclick="openListingModal(${JSON.stringify(l).replace(/"/g,'&quot;')})">${makeSlider(l.images,l.neighborhood,cardId,l.special)}<div class="listing-body"><div class="listing-unit-type">${l.type} &middot; ${l.available} available</div><div class="listing-price">$${l.price.toLocaleString()}<span>/month</span></div><div class="listing-amenities">${l.amenities.split(',').map(a=>`<span class="amenity-tag">${a.trim()}</span>`).join('')}</div></div><div class="listing-footer"><span>${l.neighborhood}, Miami FL</span><span>Contact agent</span></div></div>`;}).join('')}</div>`;
-    return;
-  }
-  const byHood={};
-  listings.forEach(l=>{if(!byHood[l.neighborhood])byHood[l.neighborhood]=[];byHood[l.neighborhood].push(l)});
+  const byHood={};listings.forEach(l=>{if(!byHood[l.neighborhood])byHood[l.neighborhood]=[];byHood[l.neighborhood].push(l)});
   content.innerHTML=Object.keys(byHood).sort().map(hood=>`<div class="client-hood-section"><div class="client-hood-header"><div class="client-hood-title">${hood}</div><div class="client-hood-count">${byHood[hood].length} listing${byHood[hood].length!==1?'s':''}</div></div><div class="client-grid">${byHood[hood].map((l,i)=>{const cardId=`${l.cid}-${l.type.replace(/\s/g,'')}-${i}`;window._listings[cardId]=l;return`<div class="listing-card" id="lcard-${cardId}" onclick="openListingModal(${JSON.stringify(l).replace(/"/g,'&quot;')})">${makeSlider(l.images,l.neighborhood,cardId,l.special)}<div class="listing-body"><div class="listing-unit-type">${l.type} &middot; ${l.available} available</div><div class="listing-price">$${l.price.toLocaleString()}<span>/month</span></div><div class="listing-amenities">${l.amenities.split(',').map(a=>`<span class="amenity-tag">${a.trim()}</span>`).join('')}</div></div><div class="listing-footer"><span>${l.neighborhood}, Miami FL</span><span>Contact agent</span></div></div>`;}).join('')}</div></div>`).join('');
 }
-  window.selectAllHoods=function(){
-  document.querySelectorAll('#client-hood-filter-wrap input[type=checkbox]').forEach(cb=>{cb.checked=true;});
-  renderClientView();
-};
-window.clearAllHoods=function(){
-  document.querySelectorAll('#client-hood-filter-wrap input[type=checkbox]').forEach(cb=>{cb.checked=false;});
-  renderClientView();
-};
-function renderClients(){
 function renderClients(){
   const hoods=getNeighborhoods();
   document.getElementById('hood-checkboxes').innerHTML=hoods.map(h=>`<label class="hood-label"><input type="checkbox" value="${h}" checked> ${h}</label>`).join('');
@@ -622,7 +608,7 @@ function openListingModal(l){
   const imgs=l.images||[];
   const imgHtml=imgs.length>0?`<div class="listing-modal-track" id="lm-track">${imgs.map(url=>`<div class="listing-modal-slide"><img src="${url}" alt="" onerror="this.style.opacity=0"></div>`).join('')}</div>${imgs.length>1?`<button class="listing-modal-prev" onclick="lmSlide(-1,${imgs.length})">&#8249;</button><button class="listing-modal-next" onclick="lmSlide(1,${imgs.length})">&#8250;</button><div class="listing-modal-count" id="lm-count">1 / ${imgs.length}</div>`:''}`:` <div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-size:60px;color:var(--cream-3)">M</div>`;
   document.getElementById('lm-imgs').innerHTML=`<div class="listing-modal-hood">${l.neighborhood}</div>${imgHtml}`;
-  document.getElementById('lm-body').innerHTML=`<div class="listing-modal-type">${l.type} &middot; ${l.available} available</div><div class="listing-modal-price">$${l.price.toLocaleString()}<span>/month</span></div><div class="listing-modal-amenities">${l.amenities.split(',').map(a=>`<span class="amenity-tag">${a.trim()}</span>`).join('')}</div><div class="listing-modal-footer">${l.neighborhood}, Miami FL &nbsp;&middot;&nbsp; Contact your for details</div>`;
+  document.getElementById('lm-body').innerHTML=`<div class="listing-modal-type">${l.type} &middot; ${l.available} available</div><div class="listing-modal-price">$${l.price.toLocaleString()}<span>/month</span></div><div class="listing-modal-amenities">${l.amenities.split(',').map(a=>`<span class="amenity-tag">${a.trim()}</span>`).join('')}</div><div class="listing-modal-footer">${l.neighborhood}, Miami FL &nbsp;&middot;&nbsp; Contact your agent for details</div>`;
   document.getElementById('listing-modal-overlay').classList.add('open');
   document.body.style.overflow='hidden';
 }
