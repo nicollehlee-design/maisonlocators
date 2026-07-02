@@ -260,9 +260,10 @@ body{font-family:var(--sans);background:var(--cream);color:var(--dark);min-heigh
       <div class="topbar">
         <span class="topbar-title">Communities</span>
         <div class="topbar-actions">
-          <input class="search-input" placeholder="Search..." id="community-search" oninput="renderCommunities()">
-          <select class="filter-select" id="hood-filter" onchange="renderCommunities()"><option value="">All neighborhoods</option></select>
-        </div>
+  <input class="search-input" placeholder="Search..." id="community-search" oninput="renderCommunities()">
+  <select class="filter-select" id="hood-filter" onchange="renderCommunities()"><option value="">All neighborhoods</option></select>
+  <button class="btn btn-primary" onclick="addNewCommunity()">+ Add Community</button>
+</div>
       </div>
       <div class="content-pad">
         <div class="notice"><strong>Agent use only.</strong> Community names are never shown to clients. Click any card to edit pricing, photos, and commission.</div>
@@ -504,7 +505,43 @@ function renderCommunities(){
   const byHood={};filtered.forEach(c=>{if(!byHood[c.neighborhood])byHood[c.neighborhood]=[];byHood[c.neighborhood].push(c)});
   document.getElementById('communities-by-hood').innerHTML=Object.keys(byHood).sort().map(hood=>`<div class="hood-section"><div class="hood-section-header"><div class="hood-section-title">${hood}</div><div class="hood-count">${byHood[hood].length} ${byHood[hood].length===1?'community':'communities'}</div></div><div class="community-grid">${byHood[hood].map(c=>`<div class="community-card" onclick="openEditPanel(${c.id})"><div class="card-img">${(c.images||[]).length>0?`<img src="${c.images[0]}" alt="" onerror="this.parentElement.innerHTML='<div class=card-img-placeholder>M</div>'">`:'<div class="card-img-placeholder">M</div>'}${(c.images||[]).length>1?`<div class="card-img-count">+${c.images.length-1} more</div>`:''}${c.special?`<div class="special-sticker">${c.special}</div>`:''}</div><div class="card-header"><div><div class="neighborhood">${c.neighborhood}</div><div class="name">${c.name}</div></div><div class="card-status"><div class="status-dot ${c.active?'active':'inactive'}"></div><div class="status-text">${c.active?'Active':'Hidden'}</div></div></div><div class="card-units">${(c.units||[]).length?(c.units||[]).map(u=>`<div class="unit-row"><span class="unit-type">${u.type}</span><span class="unit-price">$${u.price.toLocaleString()}/mo</span><span class="unit-avail">${u.available} avail.</span></div>`).join(''):'<div class="empty-units">No pricing added — click to edit</div>'}</div><div class="card-footer"><span class="amenities">${c.amenities}</span>${c.commission?`<span class="commission-badge">${commissionLabel(c.commission)}</span>`:''}<a href="${c.url}" target="_blank" onclick="event.stopPropagation()">Visit site &rarr;</a></div></div>`).join('')}</div></div>`).join('');
 }
-function openEditPanel(id){
+async function addNewCommunity(){
+  const name=prompt('Community name (agent view only):');
+  if(!name)return;
+  const neighborhood=prompt('Neighborhood (e.g., Fort Lauderdale, Brickell):');
+  if(!neighborhood)return;
+  const url=prompt('Community website URL:');
+  if(!url)return;
+  const newId=Math.max(0,...communities.map(c=>c.id))+1;
+  const newCommunity={
+    id:newId,
+    name:name.trim(),
+    neighborhood:neighborhood.trim(),
+    url:url.trim(),
+    active:true,
+    amenities:'',
+    commission:'',
+    special:'',
+    units:[],
+    images:[]
+  };
+  setSyncing(true);
+  const r=await fetch(`${SUPABASE_URL}/rest/v1/communities`,{
+    method:'POST',
+    headers:{...HEADERS,'Prefer':'return=representation'},
+    body:JSON.stringify([newCommunity])
+  });
+  setSyncing(false);
+  if(r.ok){
+    communities.push(newCommunity);
+    renderCommunities();
+    renderDashboard();
+    openEditPanel(newId);
+  } else {
+    alert('Failed to add community. Please try again.');
+  }
+}
+  function openEditPanel(id){
   editingId=id;const c=communities.find(x=>x.id===id);
   const imgs=c.images||[];const commParts=(c.commission||'').split(':');
   document.getElementById('edit-panel-title').textContent=c.name;
