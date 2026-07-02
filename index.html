@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="icon" type="image/png" href="https://images.squarespace-cdn.com/content/v1/65b9e9096f0cc81ac089a996/14e775a0-54c6-4a51-bcdd-2f07bc949cc6/Artboard+15.png?format=100w">
-<title>Maison Locators — Agent Portal</title>
+<title>Maison Locators — Apartment Portal</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -238,7 +238,7 @@ body{font-family:var(--sans);background:var(--cream);color:var(--dark);min-heigh
       <div class="sidebar-nav-item" onclick="showView('clients')">Client Links</div>
       <div class="sidebar-nav-item active" onclick="showView('preview')">Client Preview</div>
     </div>
-    <div class="sidebar-bottom"><p>Maison Locators &copy; 2025<br>Miami, FL<br>Agent use only</p></div>
+    <div class="sidebar-bottom"><p>Maison Locators &copy; 2026<br>Miami, FL<br>Agent use only</p></div>
   </aside>
   <main class="main">
     <div id="view-dashboard" class="view">
@@ -250,7 +250,7 @@ body{font-family:var(--sans);background:var(--cream);color:var(--dark);min-heigh
         </div>
       </div>
       <div class="content-pad">
-        <p class="section-sub">Portfolio overview — agent use only</p>
+        <p class="section-sub">Portfolio overview</p>
         <div class="grid-4" id="dashboard-stats"></div>
         <div class="section-title" style="margin-bottom:16px">Communities with Pricing</div>
         <div id="dashboard-recent"></div>
@@ -320,7 +320,6 @@ body{font-family:var(--sans);background:var(--cream);color:var(--dark);min-heigh
       <div class="client-header">
         <img src="https://images.squarespace-cdn.com/content/v1/65b9e9096f0cc81ac089a996/14e775a0-54c6-4a51-bcdd-2f07bc949cc6/Artboard+15.png?format=300w" alt="Maison Locators">
         <h2>Available Residences</h2>
-        <p>Miami, FL</p>
       </div>
       <div class="client-filters">
         <select class="filter-select" id="client-type-filter" onchange="renderClientView()">
@@ -390,7 +389,7 @@ let pendingView=null;
 const gate=document.createElement('div');
 gate.id='password-gate';
 gate.style.cssText='display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:200;align-items:center;justify-content:center';
-gate.innerHTML=`<div style="background:var(--white);padding:36px;width:320px"><p style="font-family:var(--serif);font-size:20px;margin-bottom:16px;color:var(--dark)">Agent Access</p><input id="pw-input" type="password" placeholder="Enter password" style="width:100%;padding:10px 12px;border:1px solid var(--border);font-family:var(--sans);font-size:13px;outline:none;margin-bottom:10px" onkeydown="if(event.key==='Enter')submitPw()"><p id="pw-error" style="color:var(--red);font-size:11px;margin-bottom:10px;display:none">Incorrect password</p><button onclick="submitPw()" style="width:100%;padding:10px;background:var(--black);color:var(--white);border:none;font-family:var(--sans);font-size:11px;letter-spacing:0.12em;text-transform:uppercase;cursor:pointer">Enter</button></div>`;
+gate.innerHTML=`<div style="background:var(--white);padding:36px;width:320px"><p style="font-family:var(--serif);font-size:20px;margin-bottom:16px;color:var(--dark)">Access</p><input id="pw-input" type="password" placeholder="Enter password" style="width:100%;padding:10px 12px;border:1px solid var(--border);font-family:var(--sans);font-size:13px;outline:none;margin-bottom:10px" onkeydown="if(event.key==='Enter')submitPw()"><p id="pw-error" style="color:var(--red);font-size:11px;margin-bottom:10px;display:none">Incorrect password</p><button onclick="submitPw()" style="width:100%;padding:10px;background:var(--black);color:var(--white);border:none;font-family:var(--sans);font-size:11px;letter-spacing:0.12em;text-transform:uppercase;cursor:pointer">Enter</button></div>`;
 document.body.appendChild(gate);
 function submitPw(){
   const val=document.getElementById('pw-input').value;
@@ -617,7 +616,7 @@ function openListingModal(l){
   const imgs=l.images||[];
   const imgHtml=imgs.length>0?`<div class="listing-modal-track" id="lm-track">${imgs.map(url=>`<div class="listing-modal-slide"><img src="${url}" alt="" onerror="this.style.opacity=0"></div>`).join('')}</div>${imgs.length>1?`<button class="listing-modal-prev" onclick="lmSlide(-1,${imgs.length})">&#8249;</button><button class="listing-modal-next" onclick="lmSlide(1,${imgs.length})">&#8250;</button><div class="listing-modal-count" id="lm-count">1 / ${imgs.length}</div>`:''}`:` <div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-size:60px;color:var(--cream-3)">M</div>`;
   document.getElementById('lm-imgs').innerHTML=`<div class="listing-modal-hood">${l.neighborhood}</div>${imgHtml}`;
-  document.getElementById('lm-body').innerHTML=`<div class="listing-modal-type">${l.type} &middot; ${l.available} available</div><div class="listing-modal-price">$${l.price.toLocaleString()}<span>/month</span></div><div class="listing-modal-amenities">${l.amenities.split(',').map(a=>`<span class="amenity-tag">${a.trim()}</span>`).join('')}</div><div class="listing-modal-footer">${l.neighborhood}, Miami FL &nbsp;&middot;&nbsp; Contact your agent for details</div>`;
+  document.getElementById('lm-body').innerHTML=`<div class="listing-modal-type">${l.type} &middot; ${l.available} available</div><div class="listing-modal-price">$${l.price.toLocaleString()}<span>/month</span></div><div class="listing-modal-amenities">${l.amenities.split(',').map(a=>`<span class="amenity-tag">${a.trim()}</span>`).join('')}</div><div class="listing-modal-footer">${l.neighborhood}, Miami FL &nbsp;&middot;&nbsp; Contact your for details</div>`;
   document.getElementById('listing-modal-overlay').classList.add('open');
   document.body.style.overflow='hidden';
 }
