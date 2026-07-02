@@ -220,6 +220,22 @@ body{font-family:var(--sans);background:var(--cream);color:var(--dark);min-heigh
   .mobile-nav-item.active{color:var(--accent-light)}
   .mobile-nav-item svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.5}
 }
+  .slide{position:relative}
+.slide::after{
+  content:'MAISON LOCATORS';
+  position:absolute;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%) rotate(-25deg);
+  color:rgba(255,255,255,0.15);
+  font-family:'Playfair Display',serif;
+  font-size:32px;
+  letter-spacing:0.3em;
+  text-shadow:0 2px 4px rgba(0,0,0,0.2);
+  pointer-events:none;
+  z-index:1;
+  white-space:nowrap;
+}
 </style>
 </head>
 <body>
@@ -617,6 +633,12 @@ if(!sessionStorage.getItem('ml_authed')&&!sessionStorage.getItem('ml_client_auth
   setTimeout(()=>document.getElementById('pw-input').focus(),100);
 }
 init();
+document.addEventListener('contextmenu',function(e){e.preventDefault();return false;});
+document.addEventListener('keydown',function(e){
+  if(e.key==='F12')e.preventDefault();
+  if(e.ctrlKey&&e.shiftKey&&(e.key==='I'||e.key==='J'||e.key==='C'))e.preventDefault();
+  if(e.ctrlKey&&e.key==='U')e.preventDefault();
+});
 </script>
 </body>
 </html>
