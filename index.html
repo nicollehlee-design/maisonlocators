@@ -591,7 +591,8 @@ function renderClientView(){
   if(typeF)listings=listings.filter(l=>l.type===typeF);
   const allBoxes=[...document.querySelectorAll('#client-hood-filter-wrap input[type=checkbox]')];
 const selectedHoodBoxes=allBoxes.filter(i=>i.checked).map(i=>i.value);
-if(allBoxes.length===hoods.length&&selectedHoodBoxes.length>0&&selectedHoodBoxes.length<hoods.length){listings=listings.filter(l=>selectedHoodBoxes.includes(l.neighborhood))}
+if(allBoxes.length===hoods.length&&selectedHoodBoxes.length===0){listings=[]}
+else if(allBoxes.length===hoods.length&&selectedHoodBoxes.length<hoods.length){listings=listings.filter(l=>selectedHoodBoxes.includes(l.neighborhood))}
   if(priceF){const[min,max]=priceF.split('-').map(Number);listings=listings.filter(l=>l.price>=min&&l.price<=max)}
   const content=document.getElementById('client-content');
   const sortF=document.getElementById('client-price-sort')?document.getElementById('client-price-sort').value:'';
