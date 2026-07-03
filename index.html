@@ -582,8 +582,10 @@ function renderClientView(){
   const clientIdx=document.getElementById('preview-client-select').value;
   const hoods=getNeighborhoods();
   const hoodWrap=document.getElementById('client-hood-filter-wrap');
-  const checkedHoods=new Set([...document.querySelectorAll('#client-hood-filter-wrap input:checked')].map(i=>i.value));
-  hoodWrap.innerHTML=`<button onclick="toggleAllHoods(true)" style="font-size:10px;letter-spacing:0.08em;text-transform:uppercase;background:var(--black);color:#fff;border:none;padding:5px 10px;cursor:pointer">Select All</button><button onclick="toggleAllHoods(false)" style="font-size:10px;letter-spacing:0.08em;text-transform:uppercase;background:transparent;color:var(--mid);border:1px solid var(--border);padding:5px 10px;cursor:pointer">Clear All</button>`+hoods.map(h=>`<label style="display:flex;align-items:center;gap:4px;font-size:11px;cursor:pointer;background:var(--cream);padding:5px 10px;border:1px solid var(--border);white-space:nowrap"><input type="checkbox" value="${h}" ${checkedHoods.has(h)||checkedHoods.size===0?'checked':''} onchange="renderClientView()" style="accent-color:var(--accent-dark)"> ${h}</label>`).join('');
+  const existingBoxes=[...document.querySelectorAll('#client-hood-filter-wrap input[type=checkbox]')];
+  const checkedHoods=new Set(existingBoxes.filter(i=>i.checked).map(i=>i.value));
+  const firstLoad=existingBoxes.length===0;
+  hoodWrap.innerHTML=`<button onclick="toggleAllHoods(true)" style="font-size:10px;letter-spacing:0.08em;text-transform:uppercase;background:var(--black);color:#fff;border:none;padding:5px 10px;cursor:pointer">Select All</button><button onclick="toggleAllHoods(false)" style="font-size:10px;letter-spacing:0.08em;text-transform:uppercase;background:transparent;color:var(--mid);border:1px solid var(--border);padding:5px 10px;cursor:pointer">Clear All</button>`+hoods.map(h=>`<label style="display:flex;align-items:center;gap:4px;font-size:11px;cursor:pointer;background:var(--cream);padding:5px 10px;border:1px solid var(--border);white-space:nowrap"><input type="checkbox" value="${h}" ${firstLoad?'checked':(checkedHoods.has(h)?'checked':'')} onchange="renderClientView()" style="accent-color:var(--accent-dark)"> ${h}</label>`).join('');
   let selectedHoods=hoods;
   if(clientIdx!==''&&clients[parseInt(clientIdx)]){selectedHoods=clients[parseInt(clientIdx)].neighborhoods||hoods}
   let listings=[];
