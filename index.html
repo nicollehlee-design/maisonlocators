@@ -426,7 +426,18 @@ window.setCity=function(city){
   document.getElementById('city-btn-all').style.color=city===''?'#fff':'var(--accent-light)';
   renderClientView();
 };
-window.toggleAllHoods=function(check){document.querySelectorAll('#client-hood-filter-wrap input[type=checkbox]').forEach(cb=>cb.checked=check);renderClientView();};
+window._allHoodsSelected=true;
+window._hoodsCleared=false;
+window.selectAllHoods=function(){
+  window._allHoodsSelected=true;
+  window._hoodsCleared=false;
+  renderClientView();
+};
+window.clearAllHoods=function(){
+  window._allHoodsSelected=false;
+  window._hoodsCleared=true;
+  renderClientView();
+};
   const DEFAULT_COMMUNITIES=[
   {id:1,name:"Palm Gardens @ Biscayne Gardens",neighborhood:"North Miami",url:"https://www.biscaynegardensliving.com/",active:true,amenities:"Pool, Gym, Pet-friendly",commission:"",units:[],images:[]},
   {id:2,name:"Amara Wynwood",neighborhood:"Wynwood",url:"https://www.amarawynwood.com/",active:true,amenities:"Rooftop Pool, Gym, Co-working",commission:"",units:[],images:[]},
@@ -596,7 +607,13 @@ function renderClientView(){
 const userCleared=existingBoxes.length>0&&checkedHoods.size===0;
   const hoodExpanded=window._hoodExpanded||false;
 const visibleHoods=hoodExpanded?hoods:hoods.slice(0,5);
-const hoodLabels=visibleHoods.map(h=>`<label style="display:flex;align-items:center;gap:4px;font-size:11px;cursor:pointer;background:var(--cream);padding:5px 10px;border:1px solid var(--border);white-space:nowrap"><input type="checkbox" value="${h}" ${firstLoad?'checked':(userCleared?'':(checkedHoods.has(h)?'checked':''))} onchange="renderClientView()" style="accent-color:var(--accent-dark)"> ${h}</label>`).join('');
+const hoodLabels=visibleHoods.map(h=>{
+  let isChecked;
+  if(window._hoodsCleared)isChecked=false;
+  else if(window._allHoodsSelected||firstLoad)isChecked=true;
+  else isChecked=checkedHoods.has(h);
+  return `<label style="display:flex;align-items:center;gap:4px;font-size:11px;cursor:pointer;background:var(--cream);padding:5px 10px;border:1px solid var(--border);white-space:nowrap"><input type="checkbox" value="${h}" ${isChecked?'checked':''} onchange="window._allHoodsSelected=false;window._hoodsCleared=false;renderClientView()" style="accent-color:var(--accent-dark)"> ${h}</label>`;
+}).join('');
 const moreBtn=hoods.length>5?`<button type="button" onclick="window._hoodExpanded=!window._hoodExpanded;renderClientView();return false;" style="font-size:11px;background:var(--accent-light);color:var(--dark);border:1px solid var(--border);padding:5px 10px;cursor:pointer;border-radius:4px">${hoodExpanded?'Show Less &laquo;':'&hellip; +'+(hoods.length-5)+' more'}</button>`:'';
 hoodWrap.innerHTML=`<button type="button" onclick="selectAllHoods();return false;" style="font-size:10px;letter-spacing:0.08em;text-transform:uppercase;background:var(--black);color:#fff;border:none;padding:5px 10px;cursor:pointer">Select All</button><button type="button" onclick="clearAllHoods();return false;" style="font-size:10px;letter-spacing:0.08em;text-transform:uppercase;background:transparent;color:var(--mid);border:1px solid var(--border);padding:5px 10px;cursor:pointer">Clear All</button>`+hoodLabels+moreBtn;
   let selectedHoods=hoods;
@@ -604,10 +621,12 @@ hoodWrap.innerHTML=`<button type="button" onclick="selectAllHoods();return false
   let listings=[];
   communities.filter(c=>c.active&&selectedHoods.includes(c.neighborhood)&&(!window._selectedCity||c.city===window._selectedCity)).forEach(c=>{(c.units||[]).forEach(u=>listings.push({cid:c.id,neighborhood:c.neighborhood,amenities:c.amenities,images:c.images||[],special:c.special||'',...u}))});
   if(typeF)listings=listings.filter(l=>l.type===typeF);
+  if(window._hoodsCleared){listings=[]}
+else if(!window._allHoodsSelected&&!firstLoad){
   const allBoxes=[...document.querySelectorAll('#client-hood-filter-wrap input[type=checkbox]')];
-const selectedHoodBoxes=allBoxes.filter(i=>i.checked).map(i=>i.value);
-if(allBoxes.length===hoods.length&&selectedHoodBoxes.length===0){listings=[]}
-else if(allBoxes.length===hoods.length&&selectedHoodBoxes.length<hoods.length){listings=listings.filter(l=>selectedHoodBoxes.includes(l.neighborhood))}
+  const selectedHoodBoxes=allBoxes.filter(i=>i.checked).map(i=>i.value);
+  listings=listings.filter(l=>selectedHoodBoxes.includes(l.neighborhood));
+}
   if(priceF){const[min,max]=priceF.split('-').map(Number);listings=listings.filter(l=>l.price>=min&&l.price<=max)}
   const content=document.getElementById('client-content');
   const sortF=document.getElementById('client-price-sort')?document.getElementById('client-price-sort').value:'';
