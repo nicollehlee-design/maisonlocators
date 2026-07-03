@@ -212,6 +212,7 @@ body{font-family:var(--sans);background:var(--cream);color:var(--dark);min-heigh
   .client-content{padding:8px 8px}
   .client-filters{padding:10px 16px}
   .listing-body{padding:14px 14px 10px}
+  .city-toggle-btn{padding:8px 16px!important;font-size:11px!important}
 }
 .mobile-nav{display:none}
 @media(max-width:900px){
@@ -323,10 +324,9 @@ body{font-family:var(--sans);background:var(--cream);color:var(--dark);min-heigh
         <h2>Available Residences</h2>
       </div>
       <div style="background:var(--black);padding:16px 36px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
-  <button id="city-btn-miami" onclick="setCity('Miami')" style="padding:14px 32px;background:#F0C419;color:#111;border:3px solid #111;font-family:'Jost',sans-serif;font-size:15px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;border-radius:6px">Miami</button>
-  <button id="city-btn-fl" onclick="setCity('Fort Lauderdale')" style="padding:14px 32px;background:var(--white);color:#111;border:3px solid #111;font-family:'Jost',sans-serif;font-size:15px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;border-radius:6px">Fort Lauderdale</button>
-  <button id="city-btn-all" onclick="setCity('')" style="padding:14px 24px;background:transparent;color:var(--accent-light);border:2px solid rgba(255,255,255,0.3);font-family:'Jost',sans-serif;font-size:13px;font-weight:400;letter-spacing:0.06em;text-transform:uppercase;cursor:pointer;border-radius:6px">Show All</button>
-</div>
+  <button id="city-btn-miami" class="city-toggle-btn" onclick="setCity('Miami')" style="padding:12px 32px;background:#F0C419;color:#111;border:3px solid #111;font-family:'Jost',sans-serif;font-size:15px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;border-radius:6px">Miami</button>
+<button id="city-btn-fl" class="city-toggle-btn" onclick="setCity('Fort Lauderdale')" style="padding:12px 32px;background:var(--white);color:#111;border:3px solid #111;font-family:'Jost',sans-serif;font-size:15px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;border-radius:6px">Fort Lauderdale</button>
+<button id="city-btn-all" class="city-toggle-btn" onclick="setCity('')" style="padding:12px 24px;background:transparent;color:var(--accent-light);border:2px solid rgba(255,255,255,0.3);font-family:'Jost',sans-serif;font-size:13px;font-weight:400;letter-spacing:0.06em;text-transform:uppercase;cursor:pointer;border-radius:6px">Show All</button></div>
 <div class="client-filters">
   <select class="filter-select" id="client-type-filter" onchange="renderClientView()">
           <option value="">All unit types</option><option value="Studio">Studio</option>
