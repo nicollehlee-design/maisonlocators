@@ -576,36 +576,7 @@ function makeSlider(images,neighborhood,cardId,special){
 function slideMove(id,dir,total){sliderIdx[id]=((sliderIdx[id]||0)+dir+total)%total;slideTo(id,sliderIdx[id],total)}
 function slideTo(id,idx,total){sliderIdx[id]=idx;const t=document.getElementById('track-'+id);if(t)t.style.transform=`translateX(-${idx*100}%)`;const d=document.getElementById('dots-'+id);if(d)[...d.children].forEach((x,i)=>x.classList.toggle('active',i===idx));const c=document.getElementById('count-'+id);if(c)c.textContent=`${idx+1} / ${total}`}
 function toggleFav(id,btn){const card=btn.closest('.listing-card');card.classList.toggle('favorited');btn.innerHTML=card.classList.contains('favorited')?'&#9829;':'&#9825;';btn.style.color=card.classList.contains('favorited')?'var(--accent-dark)':''}
-function renderClientView(){
-  const typeF=document.getElementById('client-type-filter').value;
-  const priceF=document.getElementById('client-price-filter').value;
-  const clientIdx=document.getElementById('preview-client-select').value;
-  const hoods=getNeighborhoods();
-  const hoodWrap=document.getElementById('client-hood-filter-wrap');
-const existingBoxes=[...document.querySelectorAll('#client-hood-filter-wrap input[type=checkbox]')];
-const checkedHoods=new Set(existingBoxes.filter(i=>i.checked).map(i=>i.value));
-const firstLoad=existingBoxes.length===0;
-const userCleared=existingBoxes.length>0&&checkedHoods.size===0;
-hoodWrap.innerHTML=`<button type="button" onclick="selectAllHoods();return false;" style="font-size:10px;letter-spacing:0.08em;text-transform:uppercase;background:var(--black);color:#fff;border:none;padding:5px 10px;cursor:pointer">Select All</button><button type="button" onclick="clearAllHoods();return false;" style="font-size:10px;letter-spacing:0.08em;text-transform:uppercase;background:transparent;color:var(--mid);border:1px solid var(--border);padding:5px 10px;cursor:pointer">Clear All</button>`+hoods.map(h=>`<label style="display:flex;align-items:center;gap:4px;font-size:11px;cursor:pointer;background:var(--cream);padding:5px 10px;border:1px solid var(--border);white-space:nowrap"><input type="checkbox" value="${h}" ${firstLoad?'checked':(userCleared?'':(checkedHoods.has(h)?'checked':''))} onchange="renderClientView()" style="accent-color:var(--accent-dark)"> ${h}</label>`).join('');
-  let selectedHoods=hoods;
-  if(clientIdx!==''&&clients[parseInt(clientIdx)]){selectedHoods=clients[parseInt(clientIdx)].neighborhoods||hoods}
-  let listings=[];
-  communities.filter(c=>c.active&&selectedHoods.includes(c.neighborhood)).forEach(c=>{(c.units||[]).forEach(u=>listings.push({cid:c.id,neighborhood:c.neighborhood,amenities:c.amenities,images:c.images||[],special:c.special||'',...u}))});
-  if(typeF)listings=listings.filter(l=>l.type===typeF);
-  const allBoxes=[...document.querySelectorAll('#client-hood-filter-wrap input[type=checkbox]')];
-const selectedHoodBoxes=allBoxes.filter(i=>i.checked).map(i=>i.value);
-if(allBoxes.length===hoods.length&&selectedHoodBoxes.length===0){listings=[]}
-else if(allBoxes.length===hoods.length&&selectedHoodBoxes.length<hoods.length){listings=listings.filter(l=>selectedHoodBoxes.includes(l.neighborhood))}
-  if(priceF){const[min,max]=priceF.split('-').map(Number);listings=listings.filter(l=>l.price>=min&&l.price<=max)}
-  const content=document.getElementById('client-content');
-  const sortF=document.getElementById('client-price-sort')?document.getElementById('client-price-sort').value:'';
-if(sortF==='low')listings.sort((a,b)=>a.price-b.price);
-if(sortF==='high')listings.sort((a,b)=>b.price-a.price);
-  window._listings={};
-  if(!listings.length){content.innerHTML='<div class="no-results">No listings match your current filters.</div>';return}
-  const byHood={};listings.forEach(l=>{if(!byHood[l.neighborhood])byHood[l.neighborhood]=[];byHood[l.neighborhood].push(l)});
-  content.innerHTML=Object.keys(byHood).sort().map(hood=>`<div class="client-hood-section"><div class="client-hood-header"><div class="client-hood-title">${hood}</div><div class="client-hood-count">${byHood[hood].length} listing${byHood[hood].length!==1?'s':''}</div></div><div class="client-grid">${byHood[hood].map((l,i)=>{const cardId=`${l.cid}-${l.type.replace(/\s/g,'')}-${i}`;window._listings[cardId]=l;return`<div class="listing-card" id="lcard-${cardId}" onclick="openListingModal(${JSON.stringify(l).replace(/"/g,'&quot;')})">${makeSlider(l.images,l.neighborhood,cardId,l.special)}<div class="listing-body"><div class="listing-unit-type">${l.type} &middot; ${l.available} available</div><div class="listing-price">$${l.price.toLocaleString()}<span>/month</span></div><div class="listing-amenities">${l.amenities.split(',').map(a=>`<span class="amenity-tag">${a.trim()}</span>`).join('')}</div></div><div class="listing-footer"><span>${l.neighborhood}, Miami FL</span><span>Contact agent</span></div></div>`;}).join('')}</div></div>`).join('');
-}
+
 function renderClientView(){
   const typeF=document.getElementById('client-type-filter').value;
   const priceF=document.getElementById('client-price-filter').value;
