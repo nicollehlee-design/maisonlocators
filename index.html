@@ -417,6 +417,15 @@ function submitPw(){
     document.getElementById('pw-error').style.display='block';
   }
 }
+  window._selectedCity='Miami';
+window.setCity=function(city){
+  window._selectedCity=city;
+  document.getElementById('city-btn-miami').style.background=city==='Miami'?'#F0C419':'var(--white)';
+  document.getElementById('city-btn-fl').style.background=city==='Fort Lauderdale'?'#F0C419':'var(--white)';
+  document.getElementById('city-btn-all').style.background=city===''?'#2E6B4A':'transparent';
+  document.getElementById('city-btn-all').style.color=city===''?'#fff':'var(--accent-light)';
+  renderClientView();
+};
 window.toggleAllHoods=function(check){document.querySelectorAll('#client-hood-filter-wrap input[type=checkbox]').forEach(cb=>cb.checked=check);renderClientView();};
   const DEFAULT_COMMUNITIES=[
   {id:1,name:"Palm Gardens @ Biscayne Gardens",neighborhood:"North Miami",url:"https://www.biscaynegardensliving.com/",active:true,amenities:"Pool, Gym, Pet-friendly",commission:"",units:[],images:[]},
