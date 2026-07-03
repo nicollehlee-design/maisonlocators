@@ -521,23 +521,14 @@ function renderCommunities(){
 async function addNewCommunity(){
   const name=prompt('Community name (agent view only):');
   if(!name)return;
-  const neighborhood=prompt('Neighborhood (e.g., Fort Lauderdale, Brickell):');
-  if(!neighborhood)return;
+  const city=prompt('City — type exactly "Miami" or "Fort Lauderdale":');
+if(!city)return;
+const neighborhood=prompt('Neighborhood (e.g., Brickell, Las Olas):');
+if(!neighborhood)return;
   const url=prompt('Community website URL:');
   if(!url)return;
   const newId=Math.max(0,...communities.map(c=>c.id))+1;
-  const newCommunity={
-    id:newId,
-    name:name.trim(),
-    neighborhood:neighborhood.trim(),
-    url:url.trim(),
-    active:true,
-    amenities:'',
-    commission:'',
-    special:'',
-    units:[],
-    images:[]
-  };
+  const newCommunity={id:newId,name:name.trim(),city:city.trim(),neighborhood:neighborhood.trim(),url:url.trim(),active:true,amenities:'',commission:'',special:'',units:[],images:[]};
   setSyncing(true);
   const r=await fetch(`${SUPABASE_URL}/rest/v1/communities`,{
     method:'POST',
@@ -602,7 +593,7 @@ function renderClientView(){
   let selectedHoods=hoods;
   if(clientIdx!==''&&clients[parseInt(clientIdx)]){selectedHoods=clients[parseInt(clientIdx)].neighborhoods||hoods}
   let listings=[];
-  communities.filter(c=>c.active&&selectedHoods.includes(c.neighborhood)).forEach(c=>{(c.units||[]).forEach(u=>listings.push({cid:c.id,neighborhood:c.neighborhood,amenities:c.amenities,images:c.images||[],special:c.special||'',...u}))});
+  communities.filter(c=>c.active&&selectedHoods.includes(c.neighborhood)&&(!window._selectedCity||c.city===window._selectedCity)).forEach(c=>{(c.units||[]).forEach(u=>listings.push({cid:c.id,neighborhood:c.neighborhood,amenities:c.amenities,images:c.images||[],special:c.special||'',...u}))});
   if(typeF)listings=listings.filter(l=>l.type===typeF);
   const allBoxes=[...document.querySelectorAll('#client-hood-filter-wrap input[type=checkbox]')];
 const selectedHoodBoxes=allBoxes.filter(i=>i.checked).map(i=>i.value);
