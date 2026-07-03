@@ -3,19 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="icon" type="image/png" href="https://images.squarespace-cdn.com/content/v1/65b9e9096f0cc81ac089a996/14e775a0-54c6-4a51-bcdd-2f07bc949cc6/Artboard+15.png?format=100w">
+<link rel="icon" type="image/png" href="https://images.squarespace-cdn.com/content/v1/65b9e9096f0cc81ac089a996/14e775a0-54c6-4a51-bcdd-2f07bc949cc6/Artboard+15.png?format=100w">
 <title>Maison Locators — Agent Portal</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+<script>emailjs.init('YMenUGwC36orhXAZB');</script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --cream:#F7F4EF;--cream-2:#EDE8DF;--cream-3:#E3DDD4;
-  --black:#111111;--dark:#1C1C1C;--mid:#5C5C5C;--muted:#8A8A8A;--white:#FFFFFF;
-  --accent:#B89B72;--accent-light:#DDD0B8;--accent-dark:#8A7050;
-  --red:#9B3030;--green:#2E6B4A;--border:#D8D2C8;
-  --serif:'Playfair Display',Georgia,serif;
-  --sans:'Jost',system-ui,sans-serif;
-}
+:root{--cream:#F7F4EF;--cream-2:#EDE8DF;--cream-3:#E3DDD4;--black:#111111;--dark:#1C1C1C;--mid:#5C5C5C;--muted:#8A8A8A;--white:#FFFFFF;--accent:#B89B72;--accent-light:#DDD0B8;--accent-dark:#8A7050;--red:#9B3030;--green:#2E6B4A;--border:#D8D2C8;--serif:'Playfair Display',Georgia,serif;--sans:'Jost',system-ui,sans-serif;}
 body{font-family:var(--sans);background:var(--cream);color:var(--dark);min-height:100vh;font-size:14px;line-height:1.65;font-weight:300}
 .app{display:flex;min-height:100vh}
 .sidebar{width:240px;min-width:240px;background:var(--black);color:var(--white);display:flex;flex-direction:column;position:sticky;top:0;height:100vh;overflow-y:auto}
@@ -114,25 +109,25 @@ body{font-family:var(--sans);background:var(--cream);color:var(--dark);min-heigh
 .client-hood-header{display:flex;align-items:baseline;gap:14px;margin-bottom:18px;padding-bottom:12px;border-bottom:2px solid var(--black)}
 .client-hood-title{font-family:var(--serif);font-size:26px;font-weight:400;color:var(--dark)}
 .client-hood-count{font-size:11px;color:var(--muted);letter-spacing:0.08em}
-/* DESKTOP: always 2 columns */
 .client-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:22px}
 .listing-card{background:var(--white);border:1px solid var(--border);overflow:hidden;transition:all 0.22s;position:relative;cursor:pointer}
 .listing-card:hover{box-shadow:0 8px 32px rgba(0,0,0,0.09);transform:translateY(-2px)}
 .listing-card.favorited{border-color:var(--accent)}
-.slider-wrap{position:relative;height:300px;background:var(--cream-2);overflow:hidden}
-.slider-track{display:flex;height:100%;transition:transform 0.4s ease}
-.slide{min-width:100%;height:100%;flex-shrink:0;overflow:hidden}
-.slide img{width:100%;height:100%;object-fit:cover;object-position:center top}
-/* POPUP MODAL */
+.slider-wrap{position:relative;height:240px;background:var(--cream-2);overflow:hidden}
+.slider-track{display:flex;height:100%;transition:transform 0.4s ease;will-change:transform}
+.slide{min-width:100%;height:100%;flex-shrink:0;overflow:hidden;position:relative}
+.slide img{width:100%;height:100%;object-fit:cover;object-position:center center}
+.slide::after{content:'MAISON LOCATORS';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) rotate(-25deg);color:rgba(255,255,255,0.35);font-family:'Playfair Display',serif;font-size:28px;font-weight:500;letter-spacing:0.35em;text-shadow:0 2px 6px rgba(0,0,0,0.4),0 0 20px rgba(0,0,0,0.2);pointer-events:none;z-index:5;white-space:nowrap;font-style:italic}
+.slide::before{content:'MAISON LOCATORS · MAISON LOCATORS · MAISON LOCATORS';position:absolute;top:15%;left:-10%;color:rgba(255,255,255,0.15);font-family:'Playfair Display',serif;font-size:14px;letter-spacing:0.3em;pointer-events:none;z-index:4;white-space:nowrap;transform:rotate(-15deg)}
 .listing-modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:200;align-items:flex-end;justify-content:center}
 .listing-modal-overlay.open{display:flex}
 .listing-modal{background:var(--white);width:100%;max-width:600px;max-height:90vh;overflow-y:auto;border-radius:16px 16px 0 0;position:relative;animation:slideUp 0.3s ease}
 @keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
 .listing-modal-close{position:absolute;top:16px;right:16px;background:rgba(0,0,0,0.1);border:none;width:32px;height:32px;border-radius:50%;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:2;line-height:1}
-.listing-modal-imgs{position:relative;height:260px;background:var(--cream-2);overflow:hidden}
+.listing-modal-imgs{position:relative;height:300px;background:#000;overflow:hidden}
 .listing-modal-track{display:flex;height:100%;transition:transform 0.4s ease}
 .listing-modal-slide{min-width:100%;height:100%;flex-shrink:0}
-.listing-modal-slide img{width:100%;height:100%;object-fit:cover;object-position:center center}
+.listing-modal-slide img{width:100%;height:100%;object-fit:contain;object-position:center center;background:#000}
 .listing-modal-prev,.listing-modal-next{position:absolute;top:50%;transform:translateY(-50%);background:rgba(255,255,255,0.88);border:none;width:36px;height:36px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;z-index:2}
 .listing-modal-prev{left:12px}
 .listing-modal-next{right:12px}
@@ -145,16 +140,16 @@ body{font-family:var(--sans);background:var(--cream);color:var(--dark);min-heigh
 .listing-modal-amenities{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:18px}
 .listing-modal-footer{font-size:11px;color:var(--muted);border-top:1px solid var(--cream-2);padding-top:14px}
 .slide-placeholder{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-size:60px;color:var(--cream-3);font-style:italic}
-.slider-btn{position:absolute;top:50%;transform:translateY(-50%);background:rgba(255,255,255,0.88);border:none;width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;z-index:2;transition:background 0.15s}
+.slider-btn{position:absolute;top:50%;transform:translateY(-50%);background:rgba(255,255,255,0.88);border:none;width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;z-index:6;transition:background 0.15s}
 .slider-btn:hover{background:var(--white)}
 .slider-prev{left:10px}
 .slider-next{right:10px}
-.slider-dots{position:absolute;bottom:10px;left:50%;transform:translateX(-50%);display:flex;gap:5px;z-index:2}
+.slider-dots{position:absolute;bottom:10px;left:50%;transform:translateX(-50%);display:flex;gap:5px;z-index:6}
 .slider-dot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,0.5);cursor:pointer;transition:background 0.15s}
 .slider-dot.active{background:var(--white)}
-.slider-img-count{position:absolute;top:12px;right:12px;background:rgba(0,0,0,0.55);color:var(--white);font-size:10px;padding:3px 8px;letter-spacing:0.06em;z-index:2}
-.neighborhood-tag{position:absolute;top:12px;left:12px;background:var(--black);color:var(--accent-light);font-size:9px;letter-spacing:0.15em;text-transform:uppercase;padding:5px 12px;font-weight:400;z-index:2}
-.fav-btn{position:absolute;bottom:12px;right:12px;background:rgba(255,255,255,0.92);border:none;width:34px;height:34px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:17px;transition:all 0.15s;z-index:2}
+.slider-img-count{position:absolute;top:12px;right:12px;background:rgba(0,0,0,0.55);color:var(--white);font-size:10px;padding:3px 8px;letter-spacing:0.06em;z-index:6}
+.neighborhood-tag{position:absolute;top:12px;left:12px;background:var(--black);color:var(--accent-light);font-size:9px;letter-spacing:0.15em;text-transform:uppercase;padding:5px 12px;font-weight:400;z-index:6}
+.fav-btn{position:absolute;bottom:12px;right:12px;background:rgba(255,255,255,0.92);border:none;width:34px;height:34px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:17px;transition:all 0.15s;z-index:6}
 .fav-btn:hover{background:var(--white);transform:scale(1.1)}
 .listing-body{padding:16px 16px 12px}
 .listing-unit-type{font-size:9px;letter-spacing:0.18em;text-transform:uppercase;color:var(--muted);margin-bottom:5px;font-weight:400}
@@ -193,19 +188,16 @@ body{font-family:var(--sans);background:var(--cream);color:var(--dark);min-heigh
 .sync-dot{width:7px;height:7px;border-radius:50%;background:var(--green)}
 .sync-dot.syncing{background:var(--accent);animation:pulse 1s infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}
+#fav-modal-overlay.open{display:flex!important;align-items:flex-end;justify-content:center}
 @media(max-width:900px){
   .sidebar{display:none}
   .grid-4{grid-template-columns:1fr 1fr}
   .main{padding-bottom:70px}
-  /* MOBILE: 1 column */
   .client-grid{grid-template-columns:1fr;gap:16px;max-width:100%;margin:0}
   .listing-card{max-width:100%;margin:0}
-  .slider-wrap{height:220px}
+  .slider-wrap{height:220px;width:100%}
   .listing-modal-imgs{height:220px}
-  .slider-wrap{height:200px;width:100%}
-  .slider-track{width:100%}
-  .slide{position:relative}
-  .slide img{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;object-position:center center}
+  .slide img{width:100%;height:100%;object-fit:cover;object-position:center center}
   .community-grid{grid-template-columns:1fr}
   .topbar{padding:0 16px}
   .content-pad{padding:16px}
@@ -220,8 +212,6 @@ body{font-family:var(--sans);background:var(--cream);color:var(--dark);min-heigh
   .mobile-nav-item.active{color:var(--accent-light)}
   .mobile-nav-item svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.5}
 }
-  .slide{position:relative}
-
 </style>
 </head>
 <body>
@@ -236,132 +226,54 @@ body{font-family:var(--sans);background:var(--cream);color:var(--dark);min-heigh
       <div class="sidebar-nav-item" onclick="showView('dashboard')">Dashboard</div>
       <div class="sidebar-nav-item" onclick="showView('communities')">Communities</div>
       <div class="sidebar-nav-item" onclick="showView('clients')">Client Links</div>
-      <div class="sidebar-nav-item active" onclick="showView('preview')">Client Preview</div>
+      <div class="sidebar-nav-item" onclick="showView('preview')">Client Preview</div>
     </div>
     <div class="sidebar-bottom"><p>Maison Locators &copy; 2025<br>Miami, FL<br>Agent use only</p></div>
   </aside>
   <main class="main">
     <div id="view-dashboard" class="view">
-      <div class="topbar">
-        <span class="topbar-title">Dashboard</span>
-        <div class="topbar-actions">
-          <div class="sync-indicator"><div class="sync-dot" id="sync-dot"></div><span id="sync-label">Synced</span></div>
-          <button class="btn btn-primary" onclick="showView('communities')">Manage Communities</button>
-        </div>
-      </div>
-      <div class="content-pad">
-        <p class="section-sub">Portfolio overview — agent use only</p>
-        <div class="grid-4" id="dashboard-stats"></div>
-        <div class="section-title" style="margin-bottom:16px">Communities with Pricing</div>
-        <div id="dashboard-recent"></div>
-      </div>
+      <div class="topbar"><span class="topbar-title">Dashboard</span><div class="topbar-actions"><div class="sync-indicator"><div class="sync-dot" id="sync-dot"></div><span id="sync-label">Synced</span></div><button class="btn btn-primary" onclick="showView('communities')">Manage Communities</button></div></div>
+      <div class="content-pad"><p class="section-sub">Portfolio overview — agent use only</p><div class="grid-4" id="dashboard-stats"></div><div class="section-title" style="margin-bottom:16px">Communities with Pricing</div><div id="dashboard-recent"></div></div>
     </div>
     <div id="view-communities" class="view">
-      <div class="topbar">
-        <span class="topbar-title">Communities</span>
-        <div class="topbar-actions">
-  <input class="search-input" placeholder="Search..." id="community-search" oninput="renderCommunities()">
-  <select class="filter-select" id="hood-filter" onchange="renderCommunities()"><option value="">All neighborhoods</option></select>
-  <button class="btn btn-primary" onclick="addNewCommunity()">+ Add Community</button>
-</div>
-      </div>
-      <div class="content-pad">
-        <div class="notice"><strong>Agent use only.</strong> Community names are never shown to clients. Click any card to edit pricing, photos, and commission.</div>
-        <div id="communities-by-hood"></div>
-      </div>
+      <div class="topbar"><span class="topbar-title">Communities</span><div class="topbar-actions"><input class="search-input" placeholder="Search..." id="community-search" oninput="renderCommunities()"><select class="filter-select" id="hood-filter" onchange="renderCommunities()"><option value="">All neighborhoods</option></select><button class="btn btn-primary" onclick="addNewCommunity()">+ Add Community</button></div></div>
+      <div class="content-pad"><div class="notice"><strong>Agent use only.</strong> Community names are never shown to clients. Click any card to edit pricing, photos, and commission.</div><div id="communities-by-hood"></div></div>
     </div>
     <div id="view-clients" class="view">
-      <div class="topbar">
-        <span class="topbar-title">Client Links</span>
-        <div class="topbar-actions"><button class="btn btn-primary" onclick="openNewClientModal()">+ New Client Link</button></div>
-      </div>
+      <div class="topbar"><span class="topbar-title">Client Links</span><div class="topbar-actions"><button class="btn btn-primary" onclick="openNewClientModal()">+ New Client Link</button></div></div>
       <div class="content-pad">
         <div class="generate-section" id="new-client-modal" style="display:none">
           <h4>Generate Client Link</h4>
           <div class="form-row" style="margin-bottom:14px">
             <div class="form-group" style="margin:0"><label class="form-label">Client Name</label><input class="form-input" id="new-client-name" placeholder="e.g. Sarah M."></div>
-            <div class="form-group" style="margin:0"><label class="form-label">Budget Range</label>
-              <select class="form-select" id="new-client-budget">
-                <option value="">Any</option><option value="0-2000">Under $2,000</option>
-                <option value="2000-3000">$2,000-$3,000</option><option value="3000-4000">$3,000-$4,000</option><option value="4000-9999">$4,000+</option>
-              </select>
-            </div>
+            <div class="form-group" style="margin:0"><label class="form-label">Budget Range</label><select class="form-select" id="new-client-budget"><option value="">Any</option><option value="0-2000">Under $2,000</option><option value="2000-3000">$2,000-$3,000</option><option value="3000-4000">$3,000-$4,000</option><option value="4000-9999">$4,000+</option></select></div>
           </div>
-          <div class="form-group">
-            <label class="form-label">Neighborhoods to include</label>
-            <div id="hood-checkboxes" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:6px"></div>
-          </div>
-          <div style="display:flex;gap:10px;margin-top:4px">
-            <button class="btn btn-primary" onclick="generateClientLink()">Generate Link</button>
-            <button class="btn btn-outline" onclick="document.getElementById('new-client-modal').style.display='none'">Cancel</button>
-          </div>
+          <div class="form-group"><label class="form-label">Neighborhoods to include</label><div id="hood-checkboxes" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:6px"></div></div>
+          <div style="display:flex;gap:10px;margin-top:4px"><button class="btn btn-primary" onclick="generateClientLink()">Generate Link</button><button class="btn btn-outline" onclick="document.getElementById('new-client-modal').style.display='none'">Cancel</button></div>
         </div>
-        <div id="generated-link-box" style="display:none;margin-bottom:22px" class="generate-section">
-          <h4>Share with your client</h4>
-          <div class="link-box">
-            <input class="link-input" id="generated-link-text" readonly>
-            <button class="btn btn-primary" onclick="copyLink()">Copy</button>
-          </div>
-          <p style="font-size:11px;color:var(--muted);margin-top:10px">No community names or addresses visible to client.</p>
-        </div>
-        <table class="client-table">
-          <thead><tr><th>Client</th><th>Budget</th><th>Neighborhoods</th><th>Favorites</th><th>Created</th><th></th></tr></thead>
-          <tbody id="clients-tbody"></tbody>
-        </table>
+        <div id="generated-link-box" style="display:none;margin-bottom:22px" class="generate-section"><h4>Share with your client</h4><div class="link-box"><input class="link-input" id="generated-link-text" readonly><button class="btn btn-primary" onclick="copyLink()">Copy</button></div><p style="font-size:11px;color:var(--muted);margin-top:10px">No community names or addresses visible to client.</p></div>
+        <table class="client-table"><thead><tr><th>Client</th><th>Budget</th><th>Neighborhoods</th><th>Favorites</th><th>Created</th><th></th></tr></thead><tbody id="clients-tbody"></tbody></table>
       </div>
     </div>
-    <div id="view-preview" class="view active" style="padding:0">
-      <div class="topbar">
-        <span class="topbar-title">Client Preview</span>
-        <div class="topbar-actions">
-          <span style="font-size:11px;color:var(--muted);margin-right:8px">Names hidden — client view</span>
-          <select class="filter-select" id="preview-client-select" onchange="renderClientView()"><option value="">All active listings</option></select>
-        </div>
-      </div>
-      <div class="client-header">
-        <img src="https://images.squarespace-cdn.com/content/v1/65b9e9096f0cc81ac089a996/14e775a0-54c6-4a51-bcdd-2f07bc949cc6/Artboard+15.png?format=300w" alt="Maison Locators">
-        <h2>Available Residences</h2>
-        <p>Miami, FL</p>
-      </div>
+    <div id="view-preview" class="view" style="padding:0">
+      <div class="topbar"><span class="topbar-title">Client Preview</span><div class="topbar-actions"><span style="font-size:11px;color:var(--muted);margin-right:8px">Names hidden — client view</span><select class="filter-select" id="preview-client-select" onchange="renderClientView()"><option value="">All active listings</option></select></div></div>
+      <div class="client-header"><img src="https://images.squarespace-cdn.com/content/v1/65b9e9096f0cc81ac089a996/14e775a0-54c6-4a51-bcdd-2f07bc949cc6/Artboard+15.png?format=300w" alt="Maison Locators"><h2>Available Residences</h2><p>Miami, FL</p></div>
       <div class="client-filters">
-        <select class="filter-select" id="client-type-filter" onchange="renderClientView()">
-          <option value="">All unit types</option><option value="Studio">Studio</option>
-          <option value="1 Bed">1 Bed</option><option value="2 Bed">2 Bed</option><option value="3 Bed">3 Bed</option>
-        </select>
+        <select class="filter-select" id="client-type-filter" onchange="renderClientView()"><option value="">All unit types</option><option value="Studio">Studio</option><option value="1 Bed">1 Bed</option><option value="2 Bed">2 Bed</option><option value="3 Bed">3 Bed</option></select>
+        <select class="filter-select" id="client-price-sort" onchange="renderClientView()"><option value="">Sort: Default</option><option value="low">Price: Low to High</option><option value="high">Price: High to Low</option></select>
+        <select class="filter-select" id="client-price-filter" onchange="renderClientView()"><option value="">Any price</option><option value="0-2000">Under $2,000</option><option value="2000-3000">$2,000-$3,000</option><option value="3000-4000">$3,000-$4,000</option><option value="4000-9999">$4,000+</option></select>
         <div id="client-hood-filter-wrap" style="display:flex;flex-wrap:wrap;gap:6px;align-items:center"></div>
-        <select class="filter-select" id="client-price-sort" onchange="renderClientView()">
-  <option value="">Sort: Default</option>
-  <option value="low">Price: Low to High</option>
-  <option value="high">Price: High to Low</option>
-</select>
-        <select class="filter-select" id="client-price-filter" onchange="renderClientView()">
-          <option value="">Any price</option><option value="0-2000">Under $2,000</option>
-          <option value="2000-3000">$2,000-$3,000</option><option value="3000-4000">$3,000-$4,000</option><option value="4000-9999">$4,000+</option>
-        </select>
       </div>
       <div class="client-content" id="client-content"></div>
     </div>
   </main>
 </div>
 <nav class="mobile-nav">
-  <button class="mobile-nav-item" onclick="showView('preview')">
-    <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-    Preview
-  </button>
-  <button class="mobile-nav-item" onclick="showView('clients')">
-    <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
-    Clients
-  </button>
-  <button class="mobile-nav-item" onclick="showView('communities')">
-    <svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
-    Communities
-  </button>
-  <button class="mobile-nav-item" onclick="showView('dashboard')">
-    <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
-    Dashboard
-  </button>
+  <button class="mobile-nav-item" onclick="showView('preview')"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Preview</button>
+  <button class="mobile-nav-item" onclick="showView('clients')"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>Clients</button>
+  <button class="mobile-nav-item" onclick="showView('communities')"><svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>Communities</button>
+  <button class="mobile-nav-item" onclick="showView('dashboard')"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>Dashboard</button>
 </nav>
-<!-- Listing detail popup -->
 <div class="listing-modal-overlay" id="listing-modal-overlay" onclick="closeListingModal(event)">
   <div class="listing-modal" id="listing-modal">
     <button class="listing-modal-close" onclick="closeListingModal()">&times;</button>
@@ -371,27 +283,51 @@ body{font-family:var(--sans);background:var(--cream);color:var(--dark);min-heigh
 </div>
 <div class="overlay" id="overlay" onclick="closeEditPanel()"></div>
 <div class="edit-panel" id="edit-panel">
-  <div class="edit-panel-header">
-    <h3 id="edit-panel-title">Edit Community</h3>
-    <button class="close-btn" onclick="closeEditPanel()">&times;</button>
-  </div>
+  <div class="edit-panel-header"><h3 id="edit-panel-title">Edit Community</h3><button class="close-btn" onclick="closeEditPanel()">&times;</button></div>
   <div class="edit-panel-body" id="edit-panel-body"></div>
+</div>
+<div id="fav-modal-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:300;align-items:flex-end;justify-content:center" onclick="if(event.target===this)this.style.display='none'">
+  <div style="background:var(--white);width:100%;max-width:500px;border-radius:24px 24px 0 0;padding:0 0 40px;overflow:hidden">
+    <div style="background:linear-gradient(135deg,#B89B72,#8A7050);padding:22px 24px 18px;text-align:center">
+      <div style="font-size:28px;margin-bottom:6px">📸❤️</div>
+      <p style="font-family:'Playfair Display',Georgia,serif;font-size:20px;color:#fff;font-weight:400;margin-bottom:4px">Screenshot this property!</p>
+      <p style="font-size:11px;color:rgba(255,255,255,0.85);letter-spacing:0.06em">Share it with your agent to tour ASAP</p>
+    </div>
+    <div style="background:#F7F4EF;padding:12px 24px;border-bottom:1px solid #D8D2C8">
+      <p id="fav-property-info" style="font-size:12px;color:#5C5C5C;text-align:center;font-weight:400"></p>
+    </div>
+    <div style="padding:16px 24px 14px;text-align:center;border-bottom:1px solid #EDE8DF">
+      <p style="font-size:12px;color:#5C5C5C;line-height:1.7">🏠 If you tour with your agent, we can secure the best possible deal.<br><strong style="color:#1C1C1C;font-weight:500">We are paid by the building — at no extra cost to you!</strong></p>
+    </div>
+    <div style="padding:20px 24px 0">
+      <p style="font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:#8A8A8A;margin-bottom:14px;text-align:center">Notify your agent now</p>
+      <input id="fav-name" placeholder="Your full name" style="width:100%;padding:12px 14px;border:1px solid #D8D2C8;font-family:'Jost',sans-serif;font-size:14px;margin-bottom:10px;outline:none;border-radius:4px;box-sizing:border-box">
+      <input id="fav-phone" placeholder="Your phone number" type="tel" style="width:100%;padding:12px 14px;border:1px solid #D8D2C8;font-family:'Jost',sans-serif;font-size:14px;margin-bottom:10px;outline:none;border-radius:4px;box-sizing:border-box">
+      <input id="fav-email" placeholder="Your email address" type="email" style="width:100%;padding:12px 14px;border:1px solid #D8D2C8;font-family:'Jost',sans-serif;font-size:14px;margin-bottom:16px;outline:none;border-radius:4px;box-sizing:border-box">
+      <button id="fav-submit" style="width:100%;padding:14px;background:#111111;color:#fff;border:none;font-family:'Jost',sans-serif;font-size:12px;letter-spacing:0.14em;text-transform:uppercase;cursor:pointer;border-radius:4px">❤️ Notify My Agent</button>
+      <button onclick="document.getElementById('fav-modal-overlay').style.display='none'" style="width:100%;padding:12px;background:none;border:none;font-family:'Jost',sans-serif;font-size:12px;color:#8A8A8A;cursor:pointer;margin-top:6px">Not now</button>
+    </div>
+  </div>
 </div>
 <script>
 const SUPABASE_URL='https://wqsafypwedcqepummdse.supabase.co';
 const SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Indxc2FmeXB3ZWRjcWVwdW1tZHNlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg2Mjk5OTAsImV4cCI6MjA5NDIwNTk5MH0.KONOE81AWpYw5-R9y6dOzIukf3dzx-xs5dlsjGrryvU';
 const HEADERS={'Content-Type':'application/json','apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY};
-async function sbGet(table){const r=await fetch(`${SUPABASE_URL}/rest/v1/${table}?select=*`,{headers:{...HEADERS,'Cache-Control':'no-cache'}});return r.json()}
-async function sbUpsert(table,data){setSyncing(true);const rows=Array.isArray(data)?data:[data];let r;for(const row of rows){r=await fetch(`${SUPABASE_URL}/rest/v1/${table}?id=eq.${row.id}`,{method:'PATCH',headers:{...HEADERS,'Prefer':'return=representation'},body:JSON.stringify(row)});}setSyncing(false);return r}
-async function sbDelete(table,id){setSyncing(true);const r=await fetch(`${SUPABASE_URL}/rest/v1/${table}?id=eq.${id}`,{method:'DELETE',headers:HEADERS});setSyncing(false);return r}
-function setSyncing(on){const dot=document.getElementById('sync-dot');const lbl=document.getElementById('sync-label');if(!dot)return;if(on){dot.className='sync-dot syncing';lbl.textContent='Saving...';}else{dot.className='sync-dot';lbl.textContent='Synced';}}
 const AGENT_PASSWORD='maison2025';
 const CLIENT_PASSWORD='ilovemaison';
 let pendingView=null;
+let communities=[];
+let clients=[];
+let editingId=null;
+async function sbGet(table){const r=await fetch(`${SUPABASE_URL}/rest/v1/${table}?select=*`,{headers:{...HEADERS,'Cache-Control':'no-cache'}});return r.json()}
+async function sbUpsert(table,data){setSyncing(true);const rows=Array.isArray(data)?data:[data];let r;for(const row of rows){r=await fetch(`${SUPABASE_URL}/rest/v1/${table}?id=eq.${row.id}`,{method:'PATCH',headers:{...HEADERS,'Prefer':'return=representation'},body:JSON.stringify(row)});}setSyncing(false);return r}
+async function sbInsert(table,data){setSyncing(true);const r=await fetch(`${SUPABASE_URL}/rest/v1/${table}`,{method:'POST',headers:{...HEADERS,'Prefer':'return=representation'},body:JSON.stringify(Array.isArray(data)?data:[data])});setSyncing(false);return r}
+async function sbDelete(table,id){setSyncing(true);const r=await fetch(`${SUPABASE_URL}/rest/v1/${table}?id=eq.${id}`,{method:'DELETE',headers:HEADERS});setSyncing(false);return r}
+function setSyncing(on){const dot=document.getElementById('sync-dot');const lbl=document.getElementById('sync-label');if(!dot)return;if(on){dot.className='sync-dot syncing';lbl.textContent='Saving...';}else{dot.className='sync-dot';lbl.textContent='Synced';}}
 const gate=document.createElement('div');
 gate.id='password-gate';
-gate.style.cssText='display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:200;align-items:center;justify-content:center';
-gate.innerHTML=`<div style="background:var(--white);padding:36px;width:320px"><p style="font-family:var(--serif);font-size:20px;margin-bottom:16px;color:var(--dark)">Agent Access</p><input id="pw-input" type="password" placeholder="Enter password" style="width:100%;padding:10px 12px;border:1px solid var(--border);font-family:var(--sans);font-size:13px;outline:none;margin-bottom:10px" onkeydown="if(event.key==='Enter')submitPw()"><p id="pw-error" style="color:var(--red);font-size:11px;margin-bottom:10px;display:none">Incorrect password</p><button onclick="submitPw()" style="width:100%;padding:10px;background:var(--black);color:var(--white);border:none;font-family:var(--sans);font-size:11px;letter-spacing:0.12em;text-transform:uppercase;cursor:pointer">Enter</button></div>`;
+gate.style.cssText='display:none;position:fixed;inset:0;background:rgba(0,0,0,0.9);z-index:500;align-items:center;justify-content:center';
+gate.innerHTML=`<div style="background:var(--white);padding:36px;width:320px;border-radius:12px;text-align:center"><img src="https://images.squarespace-cdn.com/content/v1/65b9e9096f0cc81ac089a996/14e775a0-54c6-4a51-bcdd-2f07bc949cc6/Artboard+15.png?format=300w" style="width:100px;margin-bottom:20px"><p style="font-family:var(--serif);font-size:22px;margin-bottom:6px;color:var(--dark)">Welcome</p><p style="font-size:12px;color:var(--muted);margin-bottom:20px">Enter your access code to continue</p><input id="pw-input" type="password" placeholder="Enter password" style="width:100%;padding:12px 14px;border:1px solid var(--border);font-family:var(--sans);font-size:14px;outline:none;margin-bottom:10px;border-radius:4px;box-sizing:border-box" onkeydown="if(event.key==='Enter')submitPw()"><p id="pw-error" style="color:var(--red);font-size:11px;margin-bottom:10px;display:none">Incorrect password. Please try again.</p><button onclick="submitPw()" style="width:100%;padding:12px;background:var(--black);color:var(--white);border:none;font-family:var(--sans);font-size:11px;letter-spacing:0.12em;text-transform:uppercase;cursor:pointer;border-radius:4px">Enter</button></div>`;
 document.body.appendChild(gate);
 function submitPw(){
   const val=document.getElementById('pw-input').value;
@@ -413,68 +349,20 @@ function submitPw(){
     document.getElementById('pw-error').style.display='block';
   }
 }
-window.toggleAllHoods=function(check){document.querySelectorAll('#client-hood-filter-wrap input[type=checkbox]').forEach(cb=>cb.checked=check);renderClientView();};
-  const DEFAULT_COMMUNITIES=[
-  {id:1,name:"Palm Gardens @ Biscayne Gardens",neighborhood:"North Miami",url:"https://www.biscaynegardensliving.com/",active:true,amenities:"Pool, Gym, Pet-friendly",commission:"",units:[],images:[]},
-  {id:2,name:"Amara Wynwood",neighborhood:"Wynwood",url:"https://www.amarawynwood.com/",active:true,amenities:"Rooftop Pool, Gym, Co-working",commission:"",units:[],images:[]},
-  {id:3,name:"Miami World Tower",neighborhood:"Downtown Miami",url:"https://www.miamiworldtower.com/",active:true,amenities:"Rooftop, Gym, Concierge",commission:"",units:[{type:"1 Bed",price:3330,available:3},{type:"2 Bed",price:4620,available:2}],images:[]},
-  {id:4,name:"Magnus Brickell",neighborhood:"Brickell",url:"https://magnusbrickell.com/",active:true,amenities:"Pool, Gym, Doorman",commission:"",units:[],images:[]},
-  {id:5,name:"AMLI Wynwood",neighborhood:"Wynwood",url:"https://www.amli.com/apartments/southeast-florida/miami-apartments/amli-wynwood",active:true,amenities:"Pool, Gym, Pet-friendly",commission:"",units:[],images:[]},
-  {id:6,name:"Wynwood Haus",neighborhood:"Wynwood",url:"https://www.wynwoodhaus.com/workforce-housing/",active:true,amenities:"Workforce Housing, Gym",commission:"",units:[],images:[]},
-  {id:7,name:"2000 Biscayne",neighborhood:"Edgewater",url:"https://www.2000biscaynemiami.com/",active:true,amenities:"Pool, Gym, Rooftop",commission:"",units:[],images:[]},
-  {id:8,name:"Forma Miami",neighborhood:"Edgewater",url:"https://www.rentformamiami.com/",active:true,amenities:"Pool, Gym, Concierge",commission:"",units:[],images:[]},
-  {id:9,name:"The Boulevard",neighborhood:"Edgewater",url:"https://www.liveboulevardmiami.com/",active:true,amenities:"Pool, Gym, Pet-friendly",commission:"",units:[],images:[]},
-  {id:10,name:"Flow Brickell",neighborhood:"Brickell",url:"https://flow.life/en/properties/miami-brickell",active:true,amenities:"Waterfront, Pool, Gym",commission:"",units:[],images:[]},
-  {id:11,name:"Muze at Met",neighborhood:"Downtown Miami",url:"https://www.muzemetmiami.com/",active:true,amenities:"Pool, Gym, Rooftop",commission:"",units:[],images:[]},
-  {id:12,name:"Maizon Brickell",neighborhood:"Brickell",url:"https://www.maizonmiami.com/",active:true,amenities:"Pool, Gym, Concierge",commission:"",units:[],images:[]},
-  {id:13,name:"Panorama Tower",neighborhood:"Brickell",url:"https://www.panoramatower.com/d/index.php",active:true,amenities:"Pool, Gym, Sky Lounge",commission:"",units:[],images:[]},
-  {id:14,name:"Metro Edgewater",neighborhood:"Edgewater",url:"https://metroedgewater.com/",active:true,amenities:"Pool, Gym, Pet-friendly",commission:"",units:[],images:[]},
-  {id:15,name:"Strata Wynwood",neighborhood:"Wynwood",url:"https://www.stratawynwood.com/",active:true,amenities:"Rooftop, Gym, Co-working",commission:"",units:[],images:[]},
-  {id:16,name:"The Dorsey Wynwood",neighborhood:"Wynwood",url:"https://dorseywynwood.com/",active:true,amenities:"Pool, Gym, Art-focused",commission:"",units:[],images:[]},
-  {id:17,name:"Wynwood 25",neighborhood:"Wynwood",url:"https://wynwood25.com/",active:true,amenities:"Pool, Gym, Creative spaces",commission:"",units:[],images:[]},
-  {id:18,name:"Artem Wynwood",neighborhood:"Wynwood",url:"https://artemwynwood.com/",active:true,amenities:"Pool, Gym, Art spaces",commission:"",units:[],images:[]},
-  {id:19,name:"Bay Parc",neighborhood:"Edgewater",url:"https://www.livebayparc.com/",active:true,amenities:"Waterfront, Pool, Gym",commission:"",units:[],images:[]},
-  {id:20,name:"Core at Link Douglas",neighborhood:"Coral Gables",url:"https://coreatlink.com/",active:true,amenities:"Pool, Gym, Transit-access",commission:"",units:[],images:[]},
-  {id:21,name:"Modera Douglas Station",neighborhood:"Coral Gables",url:"https://www.moderadouglasstation.com/",active:true,amenities:"Pool, Gym, Metro access",commission:"",units:[],images:[]},
-  {id:22,name:"29 Wyn",neighborhood:"Wynwood",url:"https://29wyn.com/",active:true,amenities:"Rooftop, Gym, Lounge",commission:"",units:[],images:[]},
-  {id:23,name:"Wynd 27 & 28",neighborhood:"Wynwood",url:"https://www.wyndmiami.com/",active:true,amenities:"Pool, Gym, Co-working",commission:"",units:[],images:[]},
-  {id:24,name:"The Atrium",neighborhood:"Midtown Miami",url:"https://www.pmcpropertygroup.com/properties/atrium",active:true,amenities:"Pool, Gym, Courtyard",commission:"",units:[],images:[]},
-  {id:25,name:"AMLI Midtown Miami",neighborhood:"Midtown Miami",url:"https://www.amli.com/apartments/southeast-florida/miami-apartments/amli-midtown-miami",active:true,amenities:"Pool, Gym, Pet-friendly",commission:"",units:[],images:[]},
-  {id:26,name:"Cortland Midtown Miami",neighborhood:"Midtown Miami",url:"https://cortland.com/apartments/cortland-midtown-miami/",active:true,amenities:"Pool, Gym, Rooftop",commission:"",units:[],images:[]},
-  {id:27,name:"Blu27 Edgewater",neighborhood:"Edgewater",url:"https://www.blu27aptsmiami.com/",active:true,amenities:"Pool, Gym, Bay views",commission:"",units:[],images:[]},
-  {id:28,name:"Wynwood Plaza Residences",neighborhood:"Wynwood",url:"https://www.wynwoodplazaresidences.com/",active:true,amenities:"Pool, Gym, Retail access",commission:"",units:[],images:[]},
-  {id:29,name:"Soleste Spring Garden",neighborhood:"Little Havana",url:"https://solestespringgardens.com/",active:true,amenities:"Pool, Gym, Pet-friendly",commission:"",units:[],images:[]},
-  {id:30,name:"Joule House",neighborhood:"Wynwood",url:"https://joulehouse.com/",active:true,amenities:"Rooftop, Gym, Creative spaces",commission:"",units:[],images:[]},
-  {id:31,name:"Remi on the River",neighborhood:"Little Havana",url:"https://www.remiontheriver.com",active:true,amenities:"Riverfront, Pool, Gym",commission:"",units:[],images:[]},
-  {id:32,name:"Berkshire Coral Gables",neighborhood:"Coral Gables",url:"https://berkshirecoralgables.com/",active:true,amenities:"Pool, Gym, Concierge",commission:"",units:[],images:[]},
-  {id:33,name:"Atala Miami",neighborhood:"Edgewater",url:"https://atalamiami.com/",active:true,amenities:"Pool, Gym, Rooftop",commission:"",units:[],images:[]},
-  {id:34,name:"The Highley House",neighborhood:"Wynwood",url:"https://thehighleyhouse.com/",active:true,amenities:"Boutique, Gym, Rooftop",commission:"",units:[],images:[]},
-  {id:35,name:"Monarc Miami",neighborhood:"Downtown Miami",url:"https://monarcmiami.com/",active:true,amenities:"Pool, Gym, Sky Deck",commission:"",units:[],images:[]},
-  {id:36,name:"CMPND Miami",neighborhood:"Downtown Miami",url:"https://cmpndmiamiapts.com/",active:true,amenities:"Pool, Gym, Co-working",commission:"",units:[],images:[]},
-  {id:37,name:"Modera Riverside",neighborhood:"Little Havana",url:"https://www.moderariverside.com/",active:true,amenities:"Pool, Gym, Riverfront",commission:"",units:[],images:[]},
-  {id:38,name:"The Julia Residences",neighborhood:"Allapattah",url:"https://juliabyneo.com/",active:true,amenities:"Pool, Gym, Art district",commission:"",units:[],images:[]},
-  {id:39,name:"14 Main St. Residences",neighborhood:"Allapattah",url:"https://14byneo.com/",active:true,amenities:"Pool, Gym, Modern design",commission:"",units:[],images:[]},
-  {id:40,name:"Uni Tower",neighborhood:"Edgewater",url:"https://www.uni.miami/",active:true,amenities:"Pool, Gym, Pet-friendly",commission:"",units:[],images:[]}
-];
-let communities=[];
-let clients=[];
-let editingId=null;
 function getNeighborhoods(){return[...new Set(communities.map(c=>c.neighborhood))].sort()}
 function commissionLabel(val){if(!val)return'';if(val==='1month')return'Commission: 1 Month';if(val.startsWith('flat:'))return'Commission: $'+Number(val.split(':')[1]).toLocaleString();return'';}
 async function init(){
   document.getElementById('communities-by-hood').innerHTML='<div class="loading"><div class="spinner"></div>Loading from database...</div>';
   let dbComms=await sbGet('communities');
-  if(!Array.isArray(dbComms)||dbComms.length===0){await sbUpsert('communities',DEFAULT_COMMUNITIES);dbComms=DEFAULT_COMMUNITIES;}
+  if(!Array.isArray(dbComms))dbComms=[];
   communities=dbComms;
   let dbClients=await sbGet('clients');
   clients=Array.isArray(dbClients)?dbClients:[];
-  renderDashboard();renderCommunities();renderClients();renderClientView();
-  setTimeout(renderClientView,100);
-  applySofiaParams();
+  renderDashboard();renderCommunities();renderClients();renderClientView();applySofiaParams();
 }
 function showView(name){
-  const protected_=['dashboard','communities'];
-  if(protected_.includes(name)&&!sessionStorage.getItem('ml_authed')){pendingView=name;gate.style.display='flex';setTimeout(()=>document.getElementById('pw-input').focus(),100);return;}
+  const agentOnly=['dashboard','communities'];
+  if(agentOnly.includes(name)&&!sessionStorage.getItem('ml_authed')){pendingView=name;gate.style.display='flex';setTimeout(()=>document.getElementById('pw-input').focus(),100);return;}
   if(name==='preview'&&!sessionStorage.getItem('ml_authed')&&!sessionStorage.getItem('ml_client_authed')){pendingView=name;gate.style.display='flex';setTimeout(()=>document.getElementById('pw-input').focus(),100);return;}
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
   document.querySelectorAll('.sidebar-nav-item').forEach(n=>n.classList.remove('active'));
@@ -482,7 +370,7 @@ function showView(name){
   const map={dashboard:'Dashboard',communities:'Communities',clients:'Client Links',preview:'Client Preview'};
   document.querySelectorAll('.sidebar-nav-item').forEach(n=>{if(n.textContent.trim()===map[name])n.classList.add('active')});
   document.querySelectorAll('.mobile-nav-item').forEach(n=>n.classList.remove('active'));
-  document.querySelectorAll('.mobile-nav-item').forEach(n=>{if(n.textContent.trim().toLowerCase()===name||n.textContent.trim().toLowerCase().includes(name.replace('preview','preview')))n.classList.add('active')});
+  document.querySelectorAll('.mobile-nav-item').forEach(n=>{if(n.textContent.trim().toLowerCase().includes(name))n.classList.add('active')});
   if(name==='dashboard')renderDashboard();
   if(name==='communities')renderCommunities();
   if(name==='clients')renderClients();
@@ -494,7 +382,7 @@ function renderDashboard(){
   const totalAvail=communities.reduce((a,c)=>a+(c.units||[]).reduce((b,u)=>b+(u.available||0),0),0);
   document.getElementById('dashboard-stats').innerHTML=`<div class="stat-card"><div class="label">Communities</div><div class="value">${active}</div><div class="sub">Active listings</div></div><div class="stat-card"><div class="label">Floor Plans</div><div class="value">${totalUnits}</div><div class="sub">Unit types tracked</div></div><div class="stat-card"><div class="label">Available</div><div class="value">${totalAvail}</div><div class="sub">Units ready to lease</div></div><div class="stat-card"><div class="label">Neighborhoods</div><div class="value">${getNeighborhoods().length}</div><div class="sub">Areas covered</div></div>`;
   const recent=communities.filter(c=>(c.units||[]).length>0);
-  document.getElementById('dashboard-recent').innerHTML=recent.length?`<table class="client-table"><thead><tr><th>Community</th><th>Neighborhood</th><th>Floor Plans</th><th>Available</th><th>Commission</th><th>Photos</th></tr></thead><tbody>${recent.map(c=>`<tr><td>${c.name}</td><td><span class="badge badge-gold">${c.neighborhood}</span></td><td>${(c.units||[]).length}</td><td>${(c.units||[]).reduce((a,u)=>a+(u.available||0),0)}</td><td>${c.commission?commissionLabel(c.commission):'—'}</td><td>${(c.images||[]).length}</td></tr>`).join('')}</tbody></table>`:`<div class="no-results">No pricing added yet. Visit Communities to get started.</div>`;
+  document.getElementById('dashboard-recent').innerHTML=recent.length?`<table class="client-table"><thead><tr><th>Community</th><th>Neighborhood</th><th>Floor Plans</th><th>Available</th><th>Commission</th><th>Photos</th></tr></thead><tbody>${recent.map(c=>`<tr><td>${c.name}</td><td><span class="badge badge-gold">${c.neighborhood}</span></td><td>${(c.units||[]).length}</td><td>${(c.units||[]).reduce((a,u)=>a+(u.available||0),0)}</td><td>${c.commission?commissionLabel(c.commission):'—'}</td><td>${(c.images||[]).length}</td></tr>`).join('')}</tbody></table>`:`<div class="no-results">No pricing added yet.</div>`;
 }
 function renderCommunities(){
   const search=(document.getElementById('community-search').value||'').toLowerCase();
@@ -513,25 +401,8 @@ async function addNewCommunity(){
   const url=prompt('Community website URL:');
   if(!url)return;
   const newId=Math.max(0,...communities.map(c=>c.id))+1;
-  const newCommunity={
-    id:newId,
-    name:name.trim(),
-    neighborhood:neighborhood.trim(),
-    url:url.trim(),
-    active:true,
-    amenities:'',
-    commission:'',
-    special:'',
-    units:[],
-    images:[]
-  };
-  setSyncing(true);
-  const r=await fetch(`${SUPABASE_URL}/rest/v1/communities`,{
-    method:'POST',
-    headers:{...HEADERS,'Prefer':'return=representation'},
-    body:JSON.stringify([newCommunity])
-  });
-  setSyncing(false);
+  const newCommunity={id:newId,name:name.trim(),neighborhood:neighborhood.trim(),url:url.trim(),active:true,amenities:'',commission:'',special:'',units:[],images:[]};
+  const r=await sbInsert('communities',newCommunity);
   if(r.ok){
     communities.push(newCommunity);
     renderCommunities();
@@ -541,7 +412,7 @@ async function addNewCommunity(){
     alert('Failed to add community. Please try again.');
   }
 }
-  function openEditPanel(id){
+function openEditPanel(id){
   editingId=id;const c=communities.find(x=>x.id===id);
   const imgs=c.images||[];const commParts=(c.commission||'').split(':');
   document.getElementById('edit-panel-title').textContent=c.name;
@@ -571,12 +442,44 @@ function closeEditPanel(){document.getElementById('edit-panel').classList.remove
 const sliderIdx={};
 function makeSlider(images,neighborhood,cardId,special){
   const imgs=images&&images.length>0?images:[];
-  return`<div class="slider-wrap" id="slider-${cardId}"><div class="neighborhood-tag">${neighborhood}</div><div class="slider-track" id="track-${cardId}">${imgs.length>0?imgs.map(url=>`<div class="slide"><img src="${url}" alt="" onerror="this.parentElement.innerHTML='<div class=slide-placeholder>M</div>'"></div>`).join(''):'<div class="slide"><div class="slide-placeholder">M</div></div>'}</div>${imgs.length>1?`<button class="slider-btn slider-prev" onclick="slideMove('${cardId}',-1,${imgs.length});event.stopPropagation()">&#8249;</button><button class="slider-btn slider-next" onclick="slideMove('${cardId}',1,${imgs.length});event.stopPropagation()">&#8250;</button><div class="slider-dots" id="dots-${cardId}">${imgs.map((_,i)=>`<div class="slider-dot ${i===0?'active':''}" onclick="slideTo('${cardId}',${i},${imgs.length});event.stopPropagation()"></div>`).join('')}</div><div class="slider-img-count" id="count-${cardId}">1 / ${imgs.length}</div>`:''}${special?`<div class="special-sticker">${special}</div>`:''}<button class="fav-btn" id="fav-${cardId}" onclick="toggleFav('${cardId}',this);event.stopPropagation()">&#9825;</button></div>`;
+  return`<div class="slider-wrap" id="slider-${cardId}"><div class="neighborhood-tag">${neighborhood}</div><div class="slider-track" id="track-${cardId}">${imgs.length>0?imgs.map(url=>`<div class="slide"><img src="${url}" alt="" onerror="this.parentElement.innerHTML='<div class=slide-placeholder>M</div>'"></div>`).join(''):'<div class="slide"><div class="slide-placeholder">M</div></div>'}</div>${imgs.length>1?`<button class="slider-btn slider-prev" onclick="slideMove('${cardId}',-1,${imgs.length});event.stopPropagation()">&#8249;</button><button class="slider-btn slider-next" onclick="slideMove('${cardId}',1,${imgs.length});event.stopPropagation()">&#8250;</button><div class="slider-dots" id="dots-${cardId}">${imgs.map((_,i)=>`<div class="slider-dot ${i===0?'active':''}" onclick="slideTo('${cardId}',${i},${imgs.length});event.stopPropagation()"></div>`).join('')}</div><div class="slider-img-count" id="count-${cardId}">1 / ${imgs.length}</div>`:''}${special?`<div class="special-sticker">${special}</div>`:''}<button class="fav-btn" id="fav-${cardId}" onclick="event.stopPropagation();if(window._listings&&window._listings['${cardId}']){toggleFav('${cardId}',this,window._listings['${cardId}'])}else{var c=this.closest('.listing-card');c.classList.toggle('favorited');this.innerHTML=c.classList.contains('favorited')?'&#9829;':'&#9825;';this.style.color=c.classList.contains('favorited')?'var(--accent-dark)':''}">&#9825;</button></div>`;
 }
 function slideMove(id,dir,total){sliderIdx[id]=((sliderIdx[id]||0)+dir+total)%total;slideTo(id,sliderIdx[id],total)}
 function slideTo(id,idx,total){sliderIdx[id]=idx;const t=document.getElementById('track-'+id);if(t)t.style.transform=`translateX(-${idx*100}%)`;const d=document.getElementById('dots-'+id);if(d)[...d.children].forEach((x,i)=>x.classList.toggle('active',i===idx));const c=document.getElementById('count-'+id);if(c)c.textContent=`${idx+1} / ${total}`}
-function toggleFav(id,btn){const card=btn.closest('.listing-card');card.classList.toggle('favorited');btn.innerHTML=card.classList.contains('favorited')?'&#9829;':'&#9825;';btn.style.color=card.classList.contains('favorited')?'var(--accent-dark)':''}
-
+function toggleFav(id,btn,l){
+  event.stopPropagation();
+  const card=btn.closest('.listing-card');
+  if(card.classList.contains('favorited')){card.classList.remove('favorited');btn.innerHTML='&#9825;';btn.style.color='';return;}
+  card.classList.add('favorited');btn.innerHTML='&#9829;';btn.style.color='var(--accent-dark)';
+  if(!l)return;
+  document.getElementById('fav-property-info').textContent=`${l.type} · ${l.neighborhood} · $${l.price.toLocaleString()}/mo`;
+  document.getElementById('fav-modal-overlay').style.display='flex';
+  document.getElementById('fav-submit').onclick=function(){
+    const name=document.getElementById('fav-name').value.trim();
+    const phone=document.getElementById('fav-phone').value.trim();
+    const email=document.getElementById('fav-email').value.trim();
+    if(!name||!phone||!email){alert('Please fill in all fields.');return;}
+    emailjs.send('service_jszrjo7','template_5su3e0c',{
+      client_name:name,client_phone:phone,client_email:email,
+      neighborhood:l.neighborhood,property_type:l.type,
+      price:'$'+l.price.toLocaleString(),amenities:l.amenities
+    }).then(()=>{
+      document.getElementById('fav-modal-overlay').style.display='none';
+      document.getElementById('fav-name').value='';
+      document.getElementById('fav-phone').value='';
+      document.getElementById('fav-email').value='';
+      alert('Your agent has been notified!');
+    }).catch(()=>alert('Something went wrong. Please try again.'));
+  };
+}
+window.selectAllHoods=function(){
+  document.querySelectorAll('#client-hood-filter-wrap input[type=checkbox]').forEach(cb=>{cb.checked=true;});
+  renderClientView();
+};
+window.clearAllHoods=function(){
+  document.querySelectorAll('#client-hood-filter-wrap input[type=checkbox]').forEach(cb=>{cb.checked=false;});
+  renderClientView();
+};
 function renderClientView(){
   const typeF=document.getElementById('client-type-filter').value;
   const priceF=document.getElementById('client-price-filter').value;
@@ -593,10 +496,12 @@ function renderClientView(){
   let listings=[];
   communities.filter(c=>c.active&&selectedHoods.includes(c.neighborhood)).forEach(c=>{(c.units||[]).forEach(u=>listings.push({cid:c.id,neighborhood:c.neighborhood,amenities:c.amenities,images:c.images||[],special:c.special||'',...u}))});
   if(typeF)listings=listings.filter(l=>l.type===typeF);
+  if(!firstLoad){
   const allBoxes=[...document.querySelectorAll('#client-hood-filter-wrap input[type=checkbox]')];
   const selectedHoodBoxes=allBoxes.filter(i=>i.checked).map(i=>i.value);
-  if(allBoxes.length===hoods.length&&selectedHoodBoxes.length===0){listings=[]}
-  else if(allBoxes.length===hoods.length&&selectedHoodBoxes.length<hoods.length){listings=listings.filter(l=>selectedHoodBoxes.includes(l.neighborhood))}
+  if(selectedHoodBoxes.length===0){listings=[]}
+  else if(selectedHoodBoxes.length<hoods.length){listings=listings.filter(l=>selectedHoodBoxes.includes(l.neighborhood))}
+}
   if(priceF){const[min,max]=priceF.split('-').map(Number);listings=listings.filter(l=>l.price>=min&&l.price<=max)}
   const sortF=document.getElementById('client-price-sort')?document.getElementById('client-price-sort').value:'';
   if(sortF==='low')listings.sort((a,b)=>a.price-b.price);
@@ -605,8 +510,14 @@ function renderClientView(){
   window._listings={};
   if(!listings.length){content.innerHTML='<div class="no-results">No listings match your current filters.</div>';return}
   if(sortF){
-    content.innerHTML=`<div class="client-grid">${listings.map((l,i)=>{const cardId=`${l.cid}-${l.type.replace(/\s/g,'')}-${i}`;window._listings[cardId]=l;return`<div class="listing-card" id="lcard-${cardId}" onclick="openListingModal(${JSON.stringify(l).replace(/"/g,'&quot;')})">${makeSlider(l.images,l.neighborhood,cardId,l.special)}<div class="listing-body"><div class="listing-unit-type">${l.type} &middot; ${l.available} available</div><div class="listing-price">$${l.price.toLocaleString()}<span>/month</span></div><div class="listing-amenities">${l.amenities.split(',').map(a=>`<span class="amenity-tag">${a.trim()}</span>`).join('')}</div></div><div class="listing-footer"><span>${l.neighborhood}, Miami FL</span><span>Contact agent</span></div></div>
-  function renderClients(){
+    content.innerHTML=`<div class="client-grid">${listings.map((l,i)=>{const cardId=`${l.cid}-${l.type.replace(/\s/g,'')}-${i}`;window._listings[cardId]=l;return`<div class="listing-card" id="lcard-${cardId}">${makeSlider(l.images,l.neighborhood,cardId,l.special)}<div class="listing-body"><div class="listing-unit-type">${l.type} &middot; ${l.available} available</div><div class="listing-price">$${l.price.toLocaleString()}<span>/month</span></div><div class="listing-amenities">${l.amenities.split(',').map(a=>`<span class="amenity-tag">${a.trim()}</span>`).join('')}</div></div><div class="listing-footer"><span>${l.neighborhood}, Miami FL</span><span>Contact agent</span></div></div>`;}).join('')}</div>`;
+    return;
+  }
+  const byHood={};
+  listings.forEach(l=>{if(!byHood[l.neighborhood])byHood[l.neighborhood]=[];byHood[l.neighborhood].push(l)});
+  content.innerHTML=Object.keys(byHood).sort().map(hood=>`<div class="client-hood-section"><div class="client-hood-header"><div class="client-hood-title">${hood}</div><div class="client-hood-count">${byHood[hood].length} listing${byHood[hood].length!==1?'s':''}</div></div><div class="client-grid">${byHood[hood].map((l,i)=>{const cardId=`${l.cid}-${l.type.replace(/\s/g,'')}-${i}`;window._listings[cardId]=l;return`<div class="listing-card" id="lcard-${cardId}">${makeSlider(l.images,l.neighborhood,cardId,l.special)}<div class="listing-body"><div class="listing-unit-type">${l.type} &middot; ${l.available} available</div><div class="listing-price">$${l.price.toLocaleString()}<span>/month</span></div><div class="listing-amenities">${l.amenities.split(',').map(a=>`<span class="amenity-tag">${a.trim()}</span>`).join('')}</div></div><div class="listing-footer"><span>${l.neighborhood}, Miami FL</span><span>Contact agent</span></div></div>`;}).join('')}</div></div>`).join('');
+}
+function renderClients(){
   const hoods=getNeighborhoods();
   document.getElementById('hood-checkboxes').innerHTML=hoods.map(h=>`<label class="hood-label"><input type="checkbox" value="${h}" checked> ${h}</label>`).join('');
   const tbody=document.getElementById('clients-tbody');
@@ -622,7 +533,7 @@ async function generateClientLink(){
   const budget=document.getElementById('new-client-budget').value;
   const checked=[...document.querySelectorAll('#hood-checkboxes input:checked')].map(i=>i.value);
   const client={id:Date.now(),name,budget,neighborhoods:checked,favorites:[],created:new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})};
-  await sbUpsert('clients',client);clients.push(client);
+  await sbInsert('clients',client);clients.push(client);
   document.getElementById('generated-link-text').value=window.location.href.split('?')[0]+'?client='+client.id;
   document.getElementById('generated-link-box').style.display='block';
   document.getElementById('new-client-modal').style.display='none';
@@ -643,41 +554,18 @@ function applySofiaParams(){
   setTimeout(applyFilters,800);
   setTimeout(applyFilters,2000);
 }
-let modalSlideIdx=0;
-function openListingModal(l){
-  modalSlideIdx=0;
-  const imgs=l.images||[];
-  const imgHtml=imgs.length>0?`<div class="listing-modal-track" id="lm-track">${imgs.map(url=>`<div class="listing-modal-slide"><img src="${url}" alt="" onerror="this.style.opacity=0"></div>`).join('')}</div>${imgs.length>1?`<button class="listing-modal-prev" onclick="lmSlide(-1,${imgs.length})">&#8249;</button><button class="listing-modal-next" onclick="lmSlide(1,${imgs.length})">&#8250;</button><div class="listing-modal-count" id="lm-count">1 / ${imgs.length}</div>`:''}`:` <div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-size:60px;color:var(--cream-3)">M</div>`;
-  document.getElementById('lm-imgs').innerHTML=`<div class="listing-modal-hood">${l.neighborhood}</div>${imgHtml}`;
-  document.getElementById('lm-body').innerHTML=`<div class="listing-modal-type">${l.type} &middot; ${l.available} available</div><div class="listing-modal-price">$${l.price.toLocaleString()}<span>/month</span></div><div class="listing-modal-amenities">${l.amenities.split(',').map(a=>`<span class="amenity-tag">${a.trim()}</span>`).join('')}</div><div class="listing-modal-footer">${l.neighborhood}, Miami FL &nbsp;&middot;&nbsp; Contact your agent for details</div>`;
-  document.getElementById('listing-modal-overlay').classList.add('open');
-  document.body.style.overflow='hidden';
-}
-function lmSlide(dir,total){
-  modalSlideIdx=((modalSlideIdx+dir)+total)%total;
-  const t=document.getElementById('lm-track');
-  if(t)t.style.transform=`translateX(-${modalSlideIdx*100}%)`;
-  const c=document.getElementById('lm-count');
-  if(c)c.textContent=`${modalSlideIdx+1} / ${total}`;
-}
-function closeListingModal(e){
-  if(e&&e.target!==document.getElementById('listing-modal-overlay')&&!e.target.classList.contains('listing-modal-close'))return;
-  document.getElementById('listing-modal-overlay').classList.remove('open');
-  document.body.style.overflow='';
-}
-// Show password gate immediately on load
-if(!sessionStorage.getItem('ml_authed')&&!sessionStorage.getItem('ml_client_authed')){
-  pendingView='preview';
-  gate.style.display='flex';
-  setTimeout(()=>document.getElementById('pw-input').focus(),100);
-}
-init();
 document.addEventListener('contextmenu',function(e){e.preventDefault();return false;});
 document.addEventListener('keydown',function(e){
   if(e.key==='F12')e.preventDefault();
   if(e.ctrlKey&&e.shiftKey&&(e.key==='I'||e.key==='J'||e.key==='C'))e.preventDefault();
   if(e.ctrlKey&&e.key==='U')e.preventDefault();
 });
+if(!sessionStorage.getItem('ml_authed')&&!sessionStorage.getItem('ml_client_authed')){
+  pendingView='preview';
+  gate.style.display='flex';
+  setTimeout(()=>document.getElementById('pw-input').focus(),100);
+}
+init();
 </script>
 </body>
 </html>
