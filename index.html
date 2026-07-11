@@ -119,7 +119,7 @@ body{font-family:var(--sans);background:var(--cream);color:var(--dark);min-heigh
 .listing-card{background:var(--white);border:1px solid var(--border);overflow:hidden;transition:all 0.22s;position:relative;cursor:pointer}
 .listing-card:hover{box-shadow:0 8px 32px rgba(0,0,0,0.09);transform:translateY(-2px)}
 .listing-card.favorited{border-color:var(--accent)}
-.slider-wrap{position:relative;height:420px;background:var(--cream-2);overflow:hidden}
+.slider-wrap{position:relative;height:220px;background:var(--cream-2);overflow:hidden}
 .slider-track{display:flex;height:100%;transition:transform 0.4s ease}
 .slide{min-width:100%;height:100%;flex-shrink:0;overflow:hidden}
 .slide img{width:100%;height:100%;object-fit:contain;object-position:center center;background:#f0ede8}
@@ -239,6 +239,7 @@ body{font-family:var(--sans);background:var(--cream);color:var(--dark);min-heigh
       <div class="sidebar-nav-item" onclick="showView('communities')">Communities</div>
       <div class="sidebar-nav-item" onclick="showView('clients')">Client Links</div>
       <div class="sidebar-nav-item active" onclick="showView('preview')">Client Preview</div>
+      <div class="sidebar-nav-item" onclick="showView('tracker')">Tracker</div>
     </div>
     <div class="sidebar-bottom"><p>Maison Locators &copy; 2025<br>Miami, FL<br>Agent use only</p></div>
   </aside>
@@ -312,6 +313,29 @@ body{font-family:var(--sans);background:var(--cream);color:var(--dark);min-heigh
         </table>
       </div>
     </div>
+    <div id="view-tracker" class="view">
+  <div class="topbar">
+    <span class="topbar-title">Tracker</span>
+    <div class="topbar-actions">
+      <button class="btn btn-outline" onclick="addAgent()">+ Add Agent</button>
+      <button class="btn btn-primary" onclick="addLead()">+ Add Lead</button>
+    </div>
+  </div>
+  <div class="content-pad">
+    <div class="section-title" style="margin-bottom:4px">Agent KPIs</div>
+    <p class="section-sub">Weekly performance metrics per agent</p>
+    <table class="client-table" style="margin-bottom:40px">
+      <thead><tr><th>Agent</th><th>Tours Booked (Week)</th><th>Applications (Week)</th><th>Direct Responses</th><th>Comments</th><th></th></tr></thead>
+      <tbody id="agents-tbody"></tbody>
+    </table>
+    <div class="section-title" style="margin-bottom:4px">Active Leads</div>
+    <p class="section-sub">Client pipeline tracker</p>
+    <table class="client-table">
+      <thead><tr><th>Client</th><th>Agent</th><th>Status</th><th>Buildings</th><th>Notes</th><th></th></tr></thead>
+      <tbody id="leads-tbody"></tbody>
+    </table>
+  </div>
+</div>
     <div id="view-preview" class="view active" style="padding:0">
       <div class="topbar">
         <span class="topbar-title">Client Preview</span>
@@ -365,6 +389,7 @@ body{font-family:var(--sans);background:var(--cream);color:var(--dark);min-heigh
     <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
     Dashboard
   </button>
+  <button class="mobile-nav-item" onclick="showView('tracker')"><svg viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M7 14l4-4 4 4 5-5"/></svg>Tracker</button>
 </nav>
 <!-- Listing detail popup -->
 <div class="listing-modal-overlay" id="listing-modal-overlay" onclick="closeListingModal(event)">
@@ -481,24 +506,28 @@ window.clearAllHoods=function(){
   {id:39,name:"14 Main St. Residences",neighborhood:"Allapattah",url:"https://14byneo.com/",active:true,amenities:"Pool, Gym, Modern design",commission:"",units:[],images:[]},
   {id:40,name:"Uni Tower",neighborhood:"Edgewater",url:"https://www.uni.miami/",active:true,amenities:"Pool, Gym, Pet-friendly",commission:"",units:[],images:[]}
 ];
-let communities=[];
+llet communities=[];
 let clients=[];
+let agents=[];
+let leads=[];
 let editingId=null;
 function getNeighborhoods(){return[...new Set(communities.map(c=>c.neighborhood))].sort()}
 function commissionLabel(val){if(!val)return'';if(val==='1month')return'Commission: 1 Month';if(val.startsWith('flat:'))return'Commission: $'+Number(val.split(':')[1]).toLocaleString();return'';}
 async function init(){
   document.getElementById('communities-by-hood').innerHTML='<div class="loading"><div class="spinner"></div>Loading from database...</div>';
   let dbComms=await sbGet('communities');
-  if(!Array.isArray(dbComms)||dbComms.length===0){await sbUpsert('communities',DEFAULT_COMMUNITIES);dbComms=DEFAULT_COMMUNITIES;}
+  if(!Array.isArray(dbComms))dbComms=[];
   communities=dbComms;
   let dbClients=await sbGet('clients');
   clients=Array.isArray(dbClients)?dbClients:[];
-  renderDashboard();renderCommunities();renderClients();renderClientView();
-  setTimeout(renderClientView,100);
-  applySofiaParams();
+  let dbAgents=await sbGet('agents');
+  agents=Array.isArray(dbAgents)?dbAgents:[];
+  let dbLeads=await sbGet('leads');
+  leads=Array.isArray(dbLeads)?dbLeads:[];
+  renderDashboard();renderCommunities();renderClients();renderClientView();renderTracker();applySofiaParams();
 }
 function showView(name){
-  const protected_=['dashboard','communities'];
+  const protected_=['dashboard','communities','tracker'];
   if(protected_.includes(name)&&!sessionStorage.getItem('ml_authed')){pendingView=name;gate.style.display='flex';setTimeout(()=>document.getElementById('pw-input').focus(),100);return;}
   if(name==='preview'&&!sessionStorage.getItem('ml_authed')&&!sessionStorage.getItem('ml_client_authed')){pendingView=name;gate.style.display='flex';setTimeout(()=>document.getElementById('pw-input').focus(),100);return;}
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
@@ -512,6 +541,7 @@ function showView(name){
   if(name==='communities')renderCommunities();
   if(name==='clients')renderClients();
   if(name==='preview')renderClientView();
+  if(name==='tracker')renderTracker();
 }
 function renderDashboard(){
   const active=communities.filter(c=>c.active).length;
@@ -638,7 +668,60 @@ if(sortF==='high')listings.sort((a,b)=>b.price-a.price);
   const byHood={};listings.forEach(l=>{if(!byHood[l.neighborhood])byHood[l.neighborhood]=[];byHood[l.neighborhood].push(l)});
   content.innerHTML=Object.keys(byHood).sort().map(hood=>`<div class="client-hood-section"><div class="client-hood-header"><div class="client-hood-title">${hood}</div><div class="client-hood-count">${byHood[hood].length} listing${byHood[hood].length!==1?'s':''}</div></div><div class="client-grid">${byHood[hood].map((l,i)=>{const cardId=`${l.cid}-${l.type.replace(/\s/g,'')}-${i}`;window._listings[cardId]=l;return`<div class="listing-card" id="lcard-${cardId}" onclick="openListingModal(${JSON.stringify(l).replace(/"/g,'&quot;')})">${makeSlider(l.images,l.neighborhood,cardId,l.special)}<div class="listing-body"><div class="listing-unit-type">${l.type} &middot; ${l.available} available</div><div class="listing-price">$${l.price.toLocaleString()}<span>/month</span></div><div class="listing-amenities">${l.amenities.split(',').map(a=>`<span class="amenity-tag">${a.trim()}</span>`).join('')}</div></div><div class="listing-footer"><span>${l.neighborhood}, Miami FL</span><span>Contact agent</span></div></div>`;}).join('')}</div></div>`).join('');
 }
-function renderClients(){
+function renderTracker(){
+  const at=document.getElementById('agents-tbody');
+  if(!agents.length){at.innerHTML=`<tr><td colspan="6" style="text-align:center;padding:30px;color:var(--muted);font-style:italic;font-family:var(--serif)">No agents added yet. Click "+ Add Agent" above.</td></tr>`;}
+  else{
+    at.innerHTML=agents.map(a=>`<tr><td><strong style="font-weight:500">${a.name}</strong></td><td><input type="number" value="${a.tours_booked||0}" onchange="updateAgent(${a.id},'tours_booked',this.value)" style="width:70px;padding:4px 6px;border:1px solid var(--border);font-family:var(--sans);font-size:12px;outline:none"></td><td><input type="number" value="${a.applications_submitted||0}" onchange="updateAgent(${a.id},'applications_submitted',this.value)" style="width:70px;padding:4px 6px;border:1px solid var(--border);font-family:var(--sans);font-size:12px;outline:none"></td><td><input type="number" value="${a.direct_responses||0}" onchange="updateAgent(${a.id},'direct_responses',this.value)" style="width:70px;padding:4px 6px;border:1px solid var(--border);font-family:var(--sans);font-size:12px;outline:none"></td><td><input type="text" value="${a.comments||''}" onchange="updateAgent(${a.id},'comments',this.value)" style="width:100%;padding:4px 6px;border:1px solid var(--border);font-family:var(--sans);font-size:12px;outline:none"></td><td><button class="btn btn-danger" onclick="deleteAgent(${a.id})">Remove</button></td></tr>`).join('');
+  }
+  const lt=document.getElementById('leads-tbody');
+  if(!leads.length){lt.innerHTML=`<tr><td colspan="6" style="text-align:center;padding:30px;color:var(--muted);font-style:italic;font-family:var(--serif)">No leads added yet. Click "+ Add Lead" above.</td></tr>`;}
+  else{
+    lt.innerHTML=leads.map(l=>`<tr><td><strong style="font-weight:500">${l.client_name}</strong></td><td><input type="text" value="${l.agent_name||''}" onchange="updateLead(${l.id},'agent_name',this.value)" style="width:110px;padding:4px 6px;border:1px solid var(--border);font-family:var(--sans);font-size:12px;outline:none"></td><td><select onchange="updateLead(${l.id},'status',this.value)" style="padding:4px 6px;border:1px solid var(--border);font-family:var(--sans);font-size:12px;outline:none"><option ${l.status==='Touring'?'selected':''}>Touring</option><option ${l.status==='Applied'?'selected':''}>Applied</option><option ${l.status==='Signed'?'selected':''}>Signed</option><option ${l.status==='Lost'?'selected':''}>Lost</option></select></td><td><input type="text" value="${l.buildings||''}" onchange="updateLead(${l.id},'buildings',this.value)" style="width:100%;padding:4px 6px;border:1px solid var(--border);font-family:var(--sans);font-size:12px;outline:none"></td><td><input type="text" value="${l.notes||''}" onchange="updateLead(${l.id},'notes',this.value)" style="width:100%;padding:4px 6px;border:1px solid var(--border);font-family:var(--sans);font-size:12px;outline:none"></td><td><button class="btn btn-danger" onclick="deleteLead(${l.id})">Remove</button></td></tr>`).join('');
+  }
+}
+async function addAgent(){
+  const name=prompt('Agent name:');
+  if(!name)return;
+  const newAgent={id:Date.now(),name:name.trim(),tours_booked:0,applications_submitted:0,direct_responses:0,comments:''};
+  await sbInsert('agents',newAgent);
+  agents.push(newAgent);
+  renderTracker();
+}
+async function updateAgent(id,field,value){
+  const a=agents.find(x=>x.id===id);
+  if(!a)return;
+  a[field]=field==='comments'?value:(parseInt(value)||0);
+  await sbUpsert('agents',a);
+}
+async function deleteAgent(id){
+  if(!confirm('Remove this agent?'))return;
+  await sbDelete('agents',id);
+  agents=agents.filter(a=>a.id!==id);
+  renderTracker();
+}
+async function addLead(){
+  const clientName=prompt('Client name:');
+  if(!clientName)return;
+  const agentName=prompt('Assigned agent name:')||'';
+  const newLead={id:Date.now(),client_name:clientName.trim(),agent_name:agentName.trim(),status:'Touring',buildings:'',notes:''};
+  await sbInsert('leads',newLead);
+  leads.push(newLead);
+  renderTracker();
+}
+async function updateLead(id,field,value){
+  const l=leads.find(x=>x.id===id);
+  if(!l)return;
+  l[field]=value;
+  await sbUpsert('leads',l);
+}
+async function deleteLead(id){
+  if(!confirm('Remove this lead?'))return;
+  await sbDelete('leads',id);
+  leads=leads.filter(l=>l.id!==id);
+  renderTracker();
+}
+  function renderClients(){
   const hoods=getNeighborhoods();
   document.getElementById('hood-checkboxes').innerHTML=hoods.map(h=>`<label class="hood-label"><input type="checkbox" value="${h}" checked> ${h}</label>`).join('');
   const tbody=document.getElementById('clients-tbody');
