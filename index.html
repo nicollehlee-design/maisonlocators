@@ -238,7 +238,7 @@ body{font-family:var(--sans);background:var(--cream);color:var(--dark);min-heigh
       <div class="sidebar-nav-item" onclick="showView('dashboard')">Dashboard</div>
       <div class="sidebar-nav-item" onclick="showView('communities')">Communities</div>
       <div class="sidebar-nav-item" onclick="showView('clients')">Client Links</div>
-      <div class="sidebar-nav-item active" onclick="showView('preview')">Client Preview</div>
+      <div class="sidebar-nav-item active" onclick="showView('preview')">Client Preview</div>       <div class="sidebar-nav-item" onclick="showView('tracker')">Lead Tracker</div>
     </div>
     <div class="sidebar-bottom"><p>Maison Locators &copy; 2025<br>Miami, FL<br>Agent use only</p></div>
   </aside>
@@ -312,7 +312,7 @@ body{font-family:var(--sans);background:var(--cream);color:var(--dark);min-heigh
         </table>
       </div>
     </div>
-    <div id="view-preview" class="view active" style="padding:0">
+    <div id="view-tracker" class="view">       <div class="topbar">         <span class="topbar-title">Lead Tracker</span>         <div class="topbar-actions"><button class="btn btn-primary" onclick="addLead()">+ Add Lead</button></div>       </div>       <div class="content-pad">         <div class="notice"><strong>Agent use only.</strong> Track active client leads and their status. Click any field to edit — changes save automatically.</div>         <table class="client-table">           <thead><tr><th>Client</th><th>Agent</th><th>Status</th><th>Buildings</th><th>Notes</th><th></th></tr></thead>           <tbody id="leads-tbody"></tbody>         </table>       </div>     </div>     <div id="view-preview" class="view active" style="padding:0">
       <div class="topbar">
         <span class="topbar-title">Client Preview</span>
         <div class="topbar-actions">
@@ -364,6 +364,10 @@ body{font-family:var(--sans);background:var(--cream);color:var(--dark);min-heigh
   <button class="mobile-nav-item" onclick="showView('dashboard')">
     <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
     Dashboard
+  </button>
+  <button class="mobile-nav-item" onclick="showView('tracker')">
+    <svg viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M7 14l4-4 4 4 5-5"/></svg>
+    Tracker
   </button>
 </nav>
 <!-- Listing detail popup -->
@@ -483,6 +487,7 @@ window.clearAllHoods=function(){
 ];
 let communities=[];
 let clients=[];
+let leads=[];
 let editingId=null;
 function getNeighborhoods(){return[...new Set(communities.map(c=>c.neighborhood))].sort()}
 function commissionLabel(val){if(!val)return'';if(val==='1month')return'Commission: 1 Month';if(val.startsWith('flat:'))return'Commission: $'+Number(val.split(':')[1]).toLocaleString();return'';}
@@ -493,18 +498,20 @@ async function init(){
   communities=dbComms;
   let dbClients=await sbGet('clients');
   clients=Array.isArray(dbClients)?dbClients:[];
-  renderDashboard();renderCommunities();renderClients();renderClientView();
+  let dbLeads=await sbGet('leads');
+  leads=Array.isArray(dbLeads)?dbLeads:[];
+  renderDashboard();renderCommunities();renderClients();renderClientView();renderTracker();
   setTimeout(renderClientView,100);
   applySofiaParams();
 }
 function showView(name){
-  const protected_=['dashboard','communities'];
+  const protected_=['dashboard','communities','tracker'];
   if(protected_.includes(name)&&!sessionStorage.getItem('ml_authed')){pendingView=name;gate.style.display='flex';setTimeout(()=>document.getElementById('pw-input').focus(),100);return;}
   if(name==='preview'&&!sessionStorage.getItem('ml_authed')&&!sessionStorage.getItem('ml_client_authed')){pendingView=name;gate.style.display='flex';setTimeout(()=>document.getElementById('pw-input').focus(),100);return;}
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
   document.querySelectorAll('.sidebar-nav-item').forEach(n=>n.classList.remove('active'));
   document.getElementById('view-'+name).classList.add('active');
-  const map={dashboard:'Dashboard',communities:'Communities',clients:'Client Links',preview:'Client Preview'};
+  const map={dashboard:'Dashboard',communities:'Communities',clients:'Client Links',preview:'Client Preview',tracker:'Lead Tracker'};
   document.querySelectorAll('.sidebar-nav-item').forEach(n=>{if(n.textContent.trim()===map[name])n.classList.add('active')});
   document.querySelectorAll('.mobile-nav-item').forEach(n=>n.classList.remove('active'));
   document.querySelectorAll('.mobile-nav-item').forEach(n=>{if(n.textContent.trim().toLowerCase()===name||n.textContent.trim().toLowerCase().includes(name.replace('preview','preview')))n.classList.add('active')});
@@ -512,6 +519,7 @@ function showView(name){
   if(name==='communities')renderCommunities();
   if(name==='clients')renderClients();
   if(name==='preview')renderClientView();
+  if(name==='tracker')renderTracker();
 }
 function renderDashboard(){
   const active=communities.filter(c=>c.active).length;
@@ -692,7 +700,7 @@ function lmSlide(dir,total){
   const c=document.getElementById('lm-count');
   if(c)c.textContent=`${modalSlideIdx+1} / ${total}`;
 }
-function closeListingModal(e){
+function renderTracker(){   const lt=document.getElementById('leads-tbody');   if(!leads.length){lt.innerHTML=`<tr><td colspan="6" style="text-align:center;padding:30px;color:var(--muted);font-style:italic;font-family:var(--serif)">No leads yet. Click "+ Add Lead" above.</td></tr>`;return}   lt.innerHTML=leads.map(l=>`<tr>     <td><input type="text" value="${l.client_name||''}" onchange="updateLead(${l.id},'client_name',this.value)" style="width:100%;padding:4px 6px;border:1px solid var(--border);font-family:var(--sans);font-size:12px;outline:none"></td>     <td><input type="text" value="${l.agent_name||''}" onchange="updateLead(${l.id},'agent_name',this.value)" style="width:110px;padding:4px 6px;border:1px solid var(--border);font-family:var(--sans);font-size:12px;outline:none"></td>     <td><select onchange="updateLead(${l.id},'status',this.value)" style="padding:4px 6px;border:1px solid var(--border);font-family:var(--sans);font-size:12px;outline:none">       <option ${l.status==='Touring'?'selected':''}>Touring</option>       <option ${l.status==='Applied'?'selected':''}>Applied</option>       <option ${l.status==='Signed'?'selected':''}>Signed</option>       <option ${l.status==='Lost'?'selected':''}>Lost</option>     </select></td>     <td><input type="text" value="${l.buildings||''}" onchange="updateLead(${l.id},'buildings',this.value)" style="width:100%;padding:4px 6px;border:1px solid var(--border);font-family:var(--sans);font-size:12px;outline:none"></td>     <td><input type="text" value="${l.notes||''}" onchange="updateLead(${l.id},'notes',this.value)" style="width:100%;padding:4px 6px;border:1px solid var(--border);font-family:var(--sans);font-size:12px;outline:none"></td>     <td><button class="btn btn-danger" onclick="deleteLead(${l.id})">Remove</button></td>   </tr>`).join(''); } async function sbInsert(table,data){   setSyncing(true);   const r=await fetch(`${SUPABASE_URL}/rest/v1/${table}`,{method:'POST',headers:{...HEADERS,'Prefer':'return=representation'},body:JSON.stringify(Array.isArray(data)?data:[data])});   setSyncing(false);   return r; } async function addLead(){   const clientName=prompt('Client name:');   if(!clientName)return;   const agentName=prompt('Assigned agent name:')||'';   const newLead={id:Date.now(),client_name:clientName.trim(),agent_name:agentName.trim(),status:'Touring',buildings:'',notes:''};   const r=await sbInsert('leads',newLead);   if(r.ok){leads.push(newLead);renderTracker();}   else{alert('Failed to add lead. Please try again.');} } async function updateLead(id,field,value){   const l=leads.find(x=>x.id===id);   if(!l)return;   l[field]=value;   await sbUpsert('leads',l); } async function deleteLead(id){   if(!confirm('Remove this lead?'))return;   await sbDelete('leads',id);   leads=leads.filter(l=>l.id!==id);   renderTracker(); } function closeListingModal(e){
   if(e&&e.target!==document.getElementById('listing-modal-overlay')&&!e.target.classList.contains('listing-modal-close'))return;
   document.getElementById('listing-modal-overlay').classList.remove('open');
   document.body.style.overflow='';
